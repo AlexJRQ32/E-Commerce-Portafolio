@@ -15,3 +15,5 @@
 **/obj
 **/log
 **/logs
+**/appsettings.Development.json
+**/appsettings.Staging.json

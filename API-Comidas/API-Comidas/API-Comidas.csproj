@@ -19,4 +19,10 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
   </ItemGroup>
 
+  <!-- Exclude secret-containing appsettings from publish output -->
+  <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
+    <None Remove="appsettings.Development.json" />
+  </ItemGroup>
+
 </Project>

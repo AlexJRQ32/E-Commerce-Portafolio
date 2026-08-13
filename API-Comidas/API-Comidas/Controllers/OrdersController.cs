@@ -426,11 +426,15 @@ namespace API_Comidas.Controllers
                 }
 
                 // Role-specific restrictions on top of the state machine:
-                // Customer: can only cancel (to "Cancelado") from Pendiente or En proceso
+                // Customer: can only cancel (to "Cancelado") from Pendiente or En proceso — NOT from Entregado
                 if (isCustomer && !isAdmin)
                 {
                     if (newStatus != "Cancelado")
-                        return BadRequest(new { message = "Customers can only cancel orders" });
+                        return BadRequest(new { message = "Customers can only cancel their orders" });
+                    if (currentStatus == "Entregado")
+                        return BadRequest(new { message = "Only administrators can cancel a delivered order" });
+                    if (currentStatus == "Cancelado")
+                        return BadRequest(new { message = "Order is already cancelled" });
                 }
 
                 // Business owner: cannot cancel from "Entregado" (only Admin can rectify)
