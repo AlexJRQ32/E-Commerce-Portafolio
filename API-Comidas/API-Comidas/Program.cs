@@ -37,7 +37,7 @@ builder.Services.AddCors(options =>
 // Rate limiting - partitioned by IP (not global)
 builder.Services.AddRateLimiter(options =>
 {
-    // General app policy: 120 req/min per IP
+    // General app policy: 120 req/min per IP — applied via [EnableRateLimiting("general")] on public controllers
     options.AddPolicy("general", context =>
         RateLimitPartition.GetFixedWindowLimiter(
             partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? "unknown",

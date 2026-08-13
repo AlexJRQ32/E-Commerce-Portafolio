@@ -6,6 +6,7 @@ namespace API_Comidas.Models
     {
         [Required]
         [StringLength(150)]
+        [RegularExpression(@"^[a-zA-Z\u00C0-\u017F\s\-\.]+$", ErrorMessage = "Invalid characters")]
         public string Name { get; set; } = string.Empty;
 
         [Required]
@@ -13,6 +14,7 @@ namespace API_Comidas.Models
         public decimal Price { get; set; }
 
         [StringLength(500)]
+        [RegularExpression("^[a-zA-Z\\u00C0-\\u017F\\s\\-\\.0-9,;:()\\[\\]$%&!?*@#+=\\'\\\"]+$", ErrorMessage = "Invalid characters")]
         public string Description { get; set; } = string.Empty;
 
         [StringLength(500)]

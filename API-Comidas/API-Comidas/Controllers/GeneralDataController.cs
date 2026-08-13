@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using API_Comidas.Models;
 using Microsoft.EntityFrameworkCore;
 
+using Microsoft.AspNetCore.RateLimiting;
+
 namespace API_Comidas.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("general")]
     public class GeneralDataController : ControllerBase
     {
         private readonly AppDbContext _context;

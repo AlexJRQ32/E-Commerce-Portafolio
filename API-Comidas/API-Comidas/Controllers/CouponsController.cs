@@ -6,11 +6,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
+using Microsoft.AspNetCore.RateLimiting;
+
 namespace API_Comidas.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
+    [EnableRateLimiting("general")]
     public class CouponsController : ControllerBase
     {
         private readonly AppDbContext _context;

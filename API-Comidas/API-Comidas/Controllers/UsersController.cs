@@ -29,19 +29,62 @@ namespace API_Comidas.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult> GetUser(int id)
         {
-            // Allow Admin or the user themselves
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+            bool isOwner = userIdClaim == id.ToString();
+            bool isAdmin = roleClaim == "Admin";
 
-            if (roleClaim != "Admin" && userIdClaim != id.ToString())
+            // Unauthenticated or not owner/admin → public profile only
+            if (!User.Identity?.IsAuthenticated == true || (!isOwner && !isAdmin))
             {
-                // If not authenticated at all, still allow viewing basic info (public-ish)
-                // But if authenticated as different user, forbid
-                if (User.Identity?.IsAuthenticated == true)
-                    return Forbid();
+                return await GetPublicProfile(id);
             }
 
-            return await GetById(id);
+            // Owner or Admin → full profile (without password)
+            return await GetFullProfile(id);
+        }
+
+        private async Task<ActionResult> GetPublicProfile(int id)
+        {
+            if (id <= 0) return BadRequest(new { message = "Invalid ID" });
+
+            var user = await _context.Users
+                .Where(u => u.Id == id)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Name,
+                    u.Img
+                })
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+                return NotFound(new { message = $"User with ID {id} not found" });
+
+            return Ok(user);
+        }
+
+        private async Task<ActionResult> GetFullProfile(int id)
+        {
+            if (id <= 0) return BadRequest(new { message = "Invalid ID" });
+
+            var user = await _context.Users
+                .Where(u => u.Id == id)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Name,
+                    u.Email,
+                    u.Phone,
+                    u.Img,
+                    u.RoleId
+                })
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+                return NotFound(new { message = $"User with ID {id} not found" });
+
+            return Ok(user);
         }
 
         [Authorize(Roles = "Admin")]
@@ -51,18 +94,19 @@ namespace API_Comidas.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateUser(int id, [FromBody] User user)
         {
-            // Allow Admin or the user themselves
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+            bool isAdmin = roleClaim == "Admin";
+            bool isOwner = userIdClaim == id.ToString();
 
-            if (roleClaim != "Admin" && userIdClaim != id.ToString())
+            if (!isAdmin && !isOwner)
             {
                 if (User.Identity?.IsAuthenticated == true)
                     return Forbid();
                 return Unauthorized("Authentication required");
             }
 
-            return await Update(id, user);
+            return await Update(id, user, isAdmin, isOwner);
         }
 
         [Authorize(Roles = "Admin")]
@@ -126,25 +170,17 @@ namespace API_Comidas.Controllers
         [HttpGet("getbyid/{id}")]
         public async Task<ActionResult> GetById(int id)
         {
-            if (id <= 0) return BadRequest(new { message = "Invalid ID" });
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+            bool isOwner = userIdClaim == id.ToString();
+            bool isAdmin = roleClaim == "Admin";
 
-            var user = await _context.Users
-                .Where(u => u.Id == id)
-                .Select(u => new
-                {
-                    u.Id,
-                    u.Name,
-                    u.Email,
-                    u.Phone,
-                    u.Img,
-                    u.RoleId
-                })
-                .FirstOrDefaultAsync();
+            if (User.Identity?.IsAuthenticated == true && (isOwner || isAdmin))
+            {
+                return await GetFullProfile(id);
+            }
 
-            if (user == null)
-                return NotFound(new { message = $"User with ID {id} not found" });
-
-            return Ok(user);
+            return await GetPublicProfile(id);
         }
 
         [Authorize(Roles = "Admin")]
@@ -187,7 +223,9 @@ namespace API_Comidas.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("update/{id}")]
-        public async Task<ActionResult> Update(int id, [FromBody] User user)
+        public Task<ActionResult> UpdateAdmin(int id, [FromBody] User user) => Update(id, user, isAdmin: true, isOwner: true);
+
+        private async Task<ActionResult> Update(int id, [FromBody] User user, bool isAdmin, bool isOwner)
         {
             try
             {
@@ -207,9 +245,24 @@ namespace API_Comidas.Controllers
                     return BadRequest(new { message = "Name can only contain letters, spaces, accents, n-tilde, hyphens, and periods" });
 
                 existingUser.Name = user.Name ?? existingUser.Name;
-                existingUser.Email = user.Email ?? existingUser.Email;
-                existingUser.Phone = user.Phone ?? existingUser.Phone;
-                existingUser.RoleId = user.RoleId > 0 ? user.RoleId : existingUser.RoleId;
+
+                // Non-owner (admin editing another user): can change everything
+                // Owner (self-edit): can change Name, Phone, Img, Password — NOT Email or RoleId
+                // Admin self-edit: same restrictions as owner for RoleId
+                if (isAdmin && !isOwner)
+                {
+                    // Admin editing another user: full control
+                    existingUser.Email = user.Email ?? existingUser.Email;
+                    existingUser.Phone = user.Phone ?? existingUser.Phone;
+                    existingUser.RoleId = user.RoleId > 0 ? user.RoleId : existingUser.RoleId;
+                }
+                else
+                {
+                    // Self-edit (owner) or non-admin: protect Email and RoleId
+                    existingUser.Phone = user.Phone ?? existingUser.Phone;
+                    // RoleId is NEVER modifiable by non-admin or self-edit
+                    // Email is identifier — only Admin editing another user can change it
+                }
 
                 // Only update password if a new one is provided
                 if (!string.IsNullOrEmpty(user.Password))

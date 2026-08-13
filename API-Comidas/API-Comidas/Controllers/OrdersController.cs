@@ -292,9 +292,17 @@ namespace API_Comidas.Controllers
                 if (!restaurantExists)
                     return BadRequest(new { message = $"Restaurant with ID {order.RestaurantId} does not exist" });
 
-                // Recalculate total server-side from items (anti-tampering)
+                // Recalculate total server-side from REAL dish prices (anti-tampering)
                 if (order.Items != null && order.Items.Count > 0)
                 {
+                    foreach (var item in order.Items)
+                    {
+                        var dish = await _context.Dishes.FindAsync(item.DishId);
+                        if (dish == null)
+                            return BadRequest(new { message = $"Dish with ID {item.DishId} does not exist" });
+                        item.Price = dish.Price; // Use real price from DB, ignore client price
+                    }
+
                     order.Total = order.Items.Sum(i => i.Price * i.Quantity);
 
                     // Optional: apply coupon discount if CouponCodeApplied is set
@@ -356,11 +364,17 @@ namespace API_Comidas.Controllers
                 if (roleClaim != "Admin" && userIdClaim != existingOrder.CustomerId.ToString())
                     return Forbid();
 
-                existingOrder.Status = order.Status ?? existingOrder.Status;
-                existingOrder.Date = order.Date ?? existingOrder.Date;
-                existingOrder.Time = order.Time ?? existingOrder.Time;
-                existingOrder.CouponCodeApplied = order.CouponCodeApplied;
-                existingOrder.Total = order.Total > 0 ? order.Total : existingOrder.Total;
+                // Only Status is editable via update. Total is immutable after creation.
+                // Validate status values
+                var validStatuses = new[] { "Pendiente", "En proceso", "Entregado", "Cancelado" };
+                if (!string.IsNullOrEmpty(order.Status) && !validStatuses.Contains(order.Status))
+                    return BadRequest(new { message = $"Invalid status. Valid values: {string.Join(", ", validStatuses)}" });
+
+                if (!string.IsNullOrEmpty(order.Status))
+                    existingOrder.Status = order.Status;
+
+                // Total, Date, Time, CouponCodeApplied are NOT editable after creation
+                // (Total is recalculated server-side on creation; Date/Time are set at checkout)
 
                 await _context.SaveChangesAsync();
                 _logger.LogInformation($"Order updated: {id}");
