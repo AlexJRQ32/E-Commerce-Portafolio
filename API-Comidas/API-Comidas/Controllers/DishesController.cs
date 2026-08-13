@@ -3,6 +3,7 @@ using API_Comidas.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API_Comidas.Controllers
 {
@@ -59,6 +60,7 @@ namespace API_Comidas.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("create")]
         public async Task<ActionResult<Dish>> Create([FromBody] Dish dish)
         {
@@ -90,6 +92,7 @@ namespace API_Comidas.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Dish dish)
         {
@@ -116,6 +119,7 @@ namespace API_Comidas.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {

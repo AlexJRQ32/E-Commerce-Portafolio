@@ -1,0 +1,28 @@
+﻿# ===== .NET / C# =====
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.userprefs
+artifacts/
+TestResults/
+
+# ===== Node / Frontend =====
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# ===== IDE =====
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ===== Secrets =====
+*.env
+.env.*
+!.env.example
+appsettings.Production.json

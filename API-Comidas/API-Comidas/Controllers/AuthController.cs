@@ -2,6 +2,10 @@ using API_Comidas.Data;
 using API_Comidas.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace API_Comidas.Controllers
 {
@@ -10,10 +14,12 @@ namespace API_Comidas.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(AppDbContext context)
+        public AuthController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         [HttpPost("login")]
@@ -29,9 +35,28 @@ namespace API_Comidas.Controllers
             if (user == null)
                 return Unauthorized("Credenciales incorrectas.");
 
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = System.Text.Encoding.UTF8.GetBytes(_configuration["JWT_SECRET"]!);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role?.Name ?? "")
+                }),
+                Expires = DateTime.UtcNow.AddHours(8),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(key),
+                    SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
             return Ok(new
             {
                 Message = "Inicio de sesión exitoso",
+                Token = tokenString,
                 User = user
             });
         }
@@ -93,7 +118,11 @@ namespace API_Comidas.Controllers
                 Address = dto.Address ?? string.Empty,
                 OpeningTime = dto.OpeningTime ?? "08:00",
                 ClosingTime = dto.ClosingTime ?? "22:00",
-                Img = string.Empty
+                Img = string.Empty,
+                Rating = "5.0",
+                IsOpen = true,
+                DeliveryFee = 0m,
+                DeliveryTime = "30-45 min"
             };
 
             _context.Restaurants.Add(restaurant);

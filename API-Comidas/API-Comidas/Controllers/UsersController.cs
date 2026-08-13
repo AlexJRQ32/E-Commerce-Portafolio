@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using API_Comidas.Data;
 using Microsoft.EntityFrameworkCore;
 using API_Comidas.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API_Comidas.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly AppDbContext _context;
