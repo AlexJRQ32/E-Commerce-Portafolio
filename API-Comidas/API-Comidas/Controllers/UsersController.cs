@@ -1,15 +1,16 @@
-    using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using API_Comidas.Data;
 using Microsoft.EntityFrameworkCore;
 using API_Comidas.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.RegularExpressions;
+using System.Security.Claims;
 
 namespace API_Comidas.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -19,85 +20,229 @@ namespace API_Comidas.Controllers
             _context = context;
         }
 
-        [HttpGet("list")]
-        public async Task<ActionResult<List<User>>> List()
+        // === RESTful aliases (new) ===
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("")]
+        public Task<ActionResult> ListUsers() => List();
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetUser(int id)
         {
-            return await _context.Users.ToListAsync();
+            // Allow Admin or the user themselves
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (roleClaim != "Admin" && userIdClaim != id.ToString())
+            {
+                // If not authenticated at all, still allow viewing basic info (public-ish)
+                // But if authenticated as different user, forbid
+                if (User.Identity?.IsAuthenticated == true)
+                    return Forbid();
+            }
+
+            return await GetById(id);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("")]
+        public Task<ActionResult> CreateUser([FromBody] User user) => Create(user);
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateUser(int id, [FromBody] User user)
+        {
+            // Allow Admin or the user themselves
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (roleClaim != "Admin" && userIdClaim != id.ToString())
+            {
+                if (User.Identity?.IsAuthenticated == true)
+                    return Forbid();
+                return Unauthorized("Authentication required");
+            }
+
+            return await Update(id, user);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public Task<IActionResult> DeleteUser(int id) => Delete(id);
+
+        [HttpGet("{userId}/addresses")]
+        public async Task<ActionResult> GetUserAddresses(int userId)
+        {
+            // Allow the user themselves or Admin
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (roleClaim != "Admin" && userIdClaim != userId.ToString())
+            {
+                if (User.Identity?.IsAuthenticated == true)
+                    return Forbid();
+                return Unauthorized("Authentication required");
+            }
+
+            try
+            {
+                var addresses = await _context.Addresses
+                    .Where(a => a.UserId == userId)
+                    .Select(a => new
+                    {
+                        a.Id,
+                        a.Name,
+                        a.UserId
+                    })
+                    .ToListAsync();
+
+                return Ok(addresses);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Internal server error" });
+            }
+        }
+
+        // === Original routes (kept for backward compatibility) ===
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("list")]
+        public async Task<ActionResult> List()
+        {
+            var users = await _context.Users
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Name,
+                    u.Email,
+                    u.Phone,
+                    u.Img,
+                    u.RoleId
+                })
+                .ToListAsync();
+            return Ok(users);
         }
 
         [HttpGet("getbyid/{id}")]
-        public async Task<ActionResult<User>> GetById(int id)
+        public async Task<ActionResult> GetById(int id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (id <= 0) return BadRequest(new { message = "Invalid ID" });
+
+            var user = await _context.Users
+                .Where(u => u.Id == id)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Name,
+                    u.Email,
+                    u.Phone,
+                    u.Img,
+                    u.RoleId
+                })
+                .FirstOrDefaultAsync();
+
             if (user == null)
                 return NotFound(new { message = $"User with ID {id} not found" });
 
             return Ok(user);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("create")]
-        public async Task<ActionResult<User>> Create([FromBody] User user)
+        public async Task<ActionResult> Create([FromBody] User user)
         {
             try
             {
+                if (user == null)
+                    return BadRequest(new { message = "Invalid data." });
+
+                // Sanitize Name: only letters, spaces, accents, n-tilde, hyphens, periods
+                if (!Regex.IsMatch(user.Name, @"^[a-zA-Z\u00C0-\u017F\s\-\.]+$"))
+                    return BadRequest(new { message = "Name can only contain letters, spaces, accents, n-tilde, hyphens, and periods" });
+
+                // Hash password before saving
+                if (!string.IsNullOrEmpty(user.Password))
+                    user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                else
+                    return BadRequest(new { message = "Password is required" });
+
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+
+                return CreatedAtAction(nameof(GetById), new { id = user.Id }, new
+                {
+                    user.Id,
+                    user.Name,
+                    user.Email,
+                    user.Phone,
+                    user.Img,
+                    user.RoleId
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest($"Error creating user: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<User>> Update(int id, [FromBody] User user)
+        public async Task<ActionResult> Update(int id, [FromBody] User user)
         {
             try
             {
+                if (id <= 0) return BadRequest(new { message = "Invalid ID" });
                 if (user == null)
                     return BadRequest("Invalid data.");
 
                 if (id != user.Id)
                     return BadRequest("ID mismatch.");
 
-                User us = await _context.Users.FirstOrDefaultAsync(x => x.Id == user.Id);
-
-                if (us == null)
+                var existingUser = await _context.Users.FindAsync(id);
+                if (existingUser == null)
                     return NotFound("User not found.");
 
-                us.Name = user.Name;
-                us.Email = user.Email;
-                us.Password = user.Password;
-                us.Phone = user.Phone;
-                us.RoleId = user.RoleId;
+                // Sanitize Name
+                if (!string.IsNullOrEmpty(user.Name) && !Regex.IsMatch(user.Name, @"^[a-zA-Z\u00C0-\u017F\s\-\.]+$"))
+                    return BadRequest(new { message = "Name can only contain letters, spaces, accents, n-tilde, hyphens, and periods" });
 
-                _context.Users.Update(us);
+                existingUser.Name = user.Name ?? existingUser.Name;
+                existingUser.Email = user.Email ?? existingUser.Email;
+                existingUser.Phone = user.Phone ?? existingUser.Phone;
+                existingUser.RoleId = user.RoleId > 0 ? user.RoleId : existingUser.RoleId;
+
+                // Only update password if a new one is provided
+                if (!string.IsNullOrEmpty(user.Password))
+                    existingUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
                 await _context.SaveChangesAsync();
-                return Ok("User updated successfully");
+                return Ok(new { message = "User updated successfully" });
             }
             catch (Exception ex)
             {
-                return BadRequest($"Error updating user: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                User us = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+                if (id <= 0) return BadRequest(new { message = "Invalid ID" });
+
+                var us = await _context.Users.FindAsync(id);
                 if (us == null)
                     return NotFound("User not found.");
 
                 _context.Users.Remove(us);
                 await _context.SaveChangesAsync();
-                return Ok("User deleted successfully");
+                return Ok(new { message = "User deleted successfully" });
             }
             catch (Exception ex)
             {
-                return BadRequest($"Error deleting user: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error" });
             }
         }
     }

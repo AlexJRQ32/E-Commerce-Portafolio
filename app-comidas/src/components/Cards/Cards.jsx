@@ -1,6 +1,7 @@
 import './Cards.css'
 import { ButtonAction, ButtonRedirect } from '../Button/Button'
 import { NavLink } from 'react-router-dom'
+import { formatCurrency } from '../../utils/format'
 
 export function CategoryCard({ categories }) {
   return (
@@ -142,14 +143,14 @@ export function OrderCard({ orders }) {
               </div>
               <div className="right-side">
                 <span className={statusClass({ status: order.status})}>{order.status}</span>
-                <h3>${order.total}</h3>
-              </div>
-            </div>
-            <div className="card-items">
-              <i className="fa-solid fa-circle-dot"></i>
-              {order.items.map((item) => (
+                <h3>{formatCurrency(order.total)}</h3>
+               </div>
+             </div>
+             <div className="card-items">
+               <i className="fa-solid fa-circle-dot"></i>
+               {order.items.map((item) => (
                 <span className="order-item" key={item.name}>
-                  {item.quantity}x {item.name} (${item.price})
+                  {item.quantity}x {item.name} ({formatCurrency(item.price)})
                 </span>
               ))}
             </div>
@@ -186,7 +187,7 @@ export function OrderSimpleCard({ orders }) {
               </div>
               <div className="right-side">
                 <span className={statusClass({ status: order.status })}>{order.status}</span>
-                <h3>${order.total}</h3>
+                <h3>{formatCurrency(order.total)}</h3>
                 <ButtonRedirect
                   icon={'star'}
                   title={'Rate'}

@@ -10,6 +10,7 @@ namespace API_Comidas.Models
 
         [Required]
         [StringLength(150)]
+        [RegularExpression(@"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-\.]+$", ErrorMessage = "Invalid characters")]
         public string TradeName { get; set; }
 
         [Required]

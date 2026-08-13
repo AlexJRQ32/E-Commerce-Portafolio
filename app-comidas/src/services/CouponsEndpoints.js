@@ -1,4 +1,5 @@
 import { API_BASE_URL } from './apiConfig'
+import { authHeaders } from './authHelper'
 
 const COUPONS_API = `${API_BASE_URL}/coupons`
 const GET_COUPONS_ENDPOINT = COUPONS_API
@@ -15,7 +16,9 @@ const RESERVE_COUPON_ENDPOINT = ({ couponId, userId }) =>
 
 export async function GetCoupons() {
   try {
-    const res = await fetch(GET_COUPONS_ENDPOINT)
+    const res = await fetch(GET_COUPONS_ENDPOINT, {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching coupons', errorText)
@@ -30,7 +33,9 @@ export async function GetCoupons() {
 
 export async function GetCouponById({ id }) {
   try {
-    const res = await fetch(GET_COUPON_BY_ID_ENDPOINT(id))
+    const res = await fetch(GET_COUPON_BY_ID_ENDPOINT(id), {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching coupon by id', errorText)
@@ -47,9 +52,7 @@ export async function CreateCoupon({ coupon }) {
   try {
     const res = await fetch(CREATE_COUPON_ENDPOINT, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: authHeaders(),
       body: JSON.stringify(coupon),
     })
     if (!res.ok) {
@@ -68,9 +71,7 @@ export async function UpdateCoupon({ id, coupon }) {
   try {
     const res = await fetch(UPDATE_COUPON_ENDPOINT(id), {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: authHeaders(),
       body: JSON.stringify(coupon),
     })
     if (!res.ok) {
@@ -89,6 +90,7 @@ export async function DeleteCoupon({ id }) {
   try {
     const res = await fetch(DELETE_COUPON_ENDPOINT(id), {
       method: 'DELETE',
+      headers: authHeaders(),
     })
     if (!res.ok) {
       const errorText = await res.text()
@@ -104,7 +106,9 @@ export async function DeleteCoupon({ id }) {
 
 export async function GetAvailableCoupons() {
   try {
-    const res = await fetch(GET_AVAILABLE_COUPONS_ENDPOINT)
+    const res = await fetch(GET_AVAILABLE_COUPONS_ENDPOINT, {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching available coupons', errorText)
@@ -119,7 +123,9 @@ export async function GetAvailableCoupons() {
 
 export async function GetReservedCoupons({ userId }) {
   try {
-    const res = await fetch(GET_RESERVED_COUPONS_ENDPOINT(userId))
+    const res = await fetch(GET_RESERVED_COUPONS_ENDPOINT(userId), {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching reserved coupons', errorText)
@@ -134,7 +140,9 @@ export async function GetReservedCoupons({ userId }) {
 
 export async function GetCouponsByUser({ userId }) {
   try {
-    const res = await fetch(GET_COUPONS_BY_USER_ENDPOINT(userId))
+    const res = await fetch(GET_COUPONS_BY_USER_ENDPOINT(userId), {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching coupons by user', errorText)
@@ -151,6 +159,7 @@ export async function ReserveCoupon({ couponId, userId }) {
   try {
     const res = await fetch(RESERVE_COUPON_ENDPOINT({ couponId, userId }), {
       method: 'POST',
+      headers: authHeaders(),
     })
     if (!res.ok) {
       const errorText = await res.text()

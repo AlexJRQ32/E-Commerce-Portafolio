@@ -1,4 +1,5 @@
 import { API_BASE_URL } from './apiConfig'
+import { authHeaders } from './authHelper'
 
 const ORDERS_API = `${API_BASE_URL}/orders`
 const CREATE_ORDER_ENDPOINT = ORDERS_API
@@ -13,9 +14,7 @@ export async function CreateOrder({ order }) {
   try {
     const res = await fetch(CREATE_ORDER_ENDPOINT, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: authHeaders(),
       body: JSON.stringify(order),
     })
     if (!res.ok) {
@@ -32,7 +31,9 @@ export async function CreateOrder({ order }) {
 
 export async function GetOrders() {
   try {
-    const res = await fetch(GET_ORDERS_ENDPOINT)
+    const res = await fetch(GET_ORDERS_ENDPOINT, {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching orders', errorText)
@@ -47,7 +48,9 @@ export async function GetOrders() {
 
 export async function GetOrderById({ id }) {
   try {
-    const res = await fetch(GET_ORDER_BY_ID_ENDPOINT(id))
+    const res = await fetch(GET_ORDER_BY_ID_ENDPOINT(id), {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching order by id', errorText)
@@ -62,7 +65,9 @@ export async function GetOrderById({ id }) {
 
 export async function GetOrdersByUser({ userId }) {
   try {
-    const res = await fetch(GET_ORDERS_BY_USER_ENDPOINT(userId))
+    const res = await fetch(GET_ORDERS_BY_USER_ENDPOINT(userId), {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching orders by user', errorText)
@@ -77,7 +82,9 @@ export async function GetOrdersByUser({ userId }) {
 
 export async function GetOrdersByRestaurant({ restaurantId }) {
   try {
-    const res = await fetch(GET_ORDERS_BY_RESTAURANT_ENDPOINT(restaurantId))
+    const res = await fetch(GET_ORDERS_BY_RESTAURANT_ENDPOINT(restaurantId), {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching orders by restaurant', errorText)
@@ -94,9 +101,7 @@ export async function UpdateOrder({ id, order }) {
   try {
     const res = await fetch(UPDATE_ORDER_ENDPOINT(id), {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: authHeaders(),
       body: JSON.stringify(order),
     })
     if (!res.ok) {

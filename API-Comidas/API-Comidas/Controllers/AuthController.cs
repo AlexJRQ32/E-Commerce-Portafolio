@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API_Comidas.Controllers
 {
@@ -15,25 +17,51 @@ namespace API_Comidas.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(AppDbContext context, IConfiguration configuration)
+        public AuthController(AppDbContext context, IConfiguration configuration, ILogger<AuthController> logger)
         {
             _context = context;
             _configuration = configuration;
+            _logger = logger;
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
+        [EnableRateLimiting("auth-strict")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            // Query only by email, verify hash in memory
             var user = await _context.Users
                 .Include(u => u.Role)
-                .FirstOrDefaultAsync(u => u.Email == dto.Email && u.Password == dto.Password);
+                .FirstOrDefaultAsync(u => u.Email == dto.Email);
 
-            if (user == null)
+            bool passwordValid = false;
+            if (user != null)
+            {
+                try
+                {
+                    // BCrypt verification only — no plaintext fallback
+                    passwordValid = BCrypt.Net.BCrypt.Verify(dto.Password, user.Password);
+                }
+                catch
+                {
+                    // Invalid hash format — treat as failed, never fallback to plaintext
+                    passwordValid = false;
+                }
+            }
+
+            if (!passwordValid)
+            {
+                _logger.LogWarning("Login fallido para email {Email}", dto.Email);
                 return Unauthorized("Credenciales incorrectas.");
+            }
+
+            var jwtIssuer = _configuration["JWT_ISSUER"] ?? "api-comidas";
+            var jwtAudience = _configuration["JWT_AUDIENCE"] ?? "app-comidas";
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = System.Text.Encoding.UTF8.GetBytes(_configuration["JWT_SECRET"]!);
@@ -45,7 +73,9 @@ namespace API_Comidas.Controllers
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Role, user.Role?.Name ?? "")
                 }),
-                Expires = DateTime.UtcNow.AddHours(8),
+                Issuer = jwtIssuer,
+                Audience = jwtAudience,
+                Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256Signature)
@@ -53,31 +83,45 @@ namespace API_Comidas.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
+            // NEVER return password or full user entity
             return Ok(new
             {
                 Message = "Inicio de sesión exitoso",
                 Token = tokenString,
-                User = user
+                User = new
+                {
+                    user.Id,
+                    user.Name,
+                    user.Email,
+                    user.Phone,
+                    user.Img,
+                    Role = user.Role?.Name
+                }
             });
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
+        [EnableRateLimiting("auth-strict")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
-                return BadRequest("El correo electrónico ya está registrado.");
-
             if (dto.RoleId != 2 && dto.RoleId != 3)
                 return BadRequest("RoleId inválido. Debe ser 2 (Business) o 3 (Customer).");
+
+            // Anti-enumeration: if email exists, return neutral success (same response shape)
+            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+            {
+                return Ok(new { Message = "Solicitud procesada" });
+            }
 
             var user = new User
             {
                 Name = dto.Name,
                 Email = dto.Email,
-                Password = dto.Password,
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 Phone = dto.Phone,
                 RoleId = dto.RoleId
             };
@@ -94,12 +138,27 @@ namespace API_Comidas.Controllers
         }
 
         [HttpPost("register-restaurant")]
+        [Authorize]
+        [EnableRateLimiting("auth-strict")]
         public async Task<IActionResult> RegisterRestaurant([FromBody] CreateRestaurantDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == dto.UserId);
+            // Use userId from JWT claim, NOT from body (anti-IDOR)
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("Usuario no autenticado.");
+
+            var userId = int.Parse(userIdClaim);
+
+            // If body UserId differs from claim and user is not Admin, reject
+            if (dto.UserId != userId && roleClaim != "Admin")
+                return Forbid();
+
+            // Use claim userId for all lookups
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user == null)
                 return NotFound("Usuario no encontrado.");
@@ -107,14 +166,14 @@ namespace API_Comidas.Controllers
             if (user.RoleId != 2)
                 return BadRequest("El usuario debe tener rol de Business (2) para registrar un restaurante.");
 
-            if (await _context.Restaurants.AnyAsync(r => r.UserId == dto.UserId))
+            if (await _context.Restaurants.AnyAsync(r => r.UserId == userId))
                 return BadRequest("Este usuario ya tiene un restaurante registrado.");
 
             var restaurant = new Restaurant
             {
                 TradeName = dto.TradeName,
                 CategoryId = dto.CategoryId,
-                UserId = user.Id,
+                UserId = userId,
                 Address = dto.Address ?? string.Empty,
                 OpeningTime = dto.OpeningTime ?? "08:00",
                 ClosingTime = dto.ClosingTime ?? "22:00",
@@ -132,7 +191,7 @@ namespace API_Comidas.Controllers
             {
                 Message = "Restaurante registrado exitosamente",
                 RestaurantId = restaurant.Id,
-                UserId = user.Id
+                UserId = userId
             });
         }
     }

@@ -1,4 +1,5 @@
 import { API_BASE_URL } from './apiConfig'
+import { authHeaders } from './authHelper'
 
 const RESTAURANTS_API = `${API_BASE_URL}/restaurants`
 const GET_RESTAURANTS_ENDPOINT = RESTAURANTS_API
@@ -12,7 +13,9 @@ const GET_RESTAURANTS_BY_USER_ENDPOINT = (userId) =>
 
 export async function GetRestaurants() {
   try {
-    const res = await fetch(GET_RESTAURANTS_ENDPOINT)
+    const res = await fetch(GET_RESTAURANTS_ENDPOINT, {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching restaurants', errorText)
@@ -27,7 +30,9 @@ export async function GetRestaurants() {
 
 export async function GetRestaurantById({ id }) {
   try {
-    const res = await fetch(GET_RESTAURANT_BY_ID_ENDPOINT(id))
+    const res = await fetch(GET_RESTAURANT_BY_ID_ENDPOINT(id), {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching restaurant by id', errorText)
@@ -44,9 +49,7 @@ export async function CreateRestaurant({ restaurant }) {
   try {
     const res = await fetch(CREATE_RESTAURANT_ENDPOINT, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: authHeaders(),
       body: JSON.stringify(restaurant),
     })
     if (!res.ok) {
@@ -65,9 +68,7 @@ export async function UpdateRestaurant({ id, restaurant }) {
   try {
     const res = await fetch(UPDATE_RESTAURANT_ENDPOINT(id), {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: authHeaders(),
       body: JSON.stringify(restaurant),
     })
     if (!res.ok) {
@@ -86,6 +87,7 @@ export async function DeleteRestaurant({ id }) {
   try {
     const res = await fetch(DELETE_RESTAURANT_ENDPOINT(id), {
       method: 'DELETE',
+      headers: authHeaders(),
     })
     if (!res.ok) {
       const errorText = await res.text()
@@ -101,7 +103,9 @@ export async function DeleteRestaurant({ id }) {
 
 export async function GetRestaurantMenu({ id }) {
   try {
-    const res = await fetch(GET_RESTAURANT_MENU_ENDPOINT(id))
+    const res = await fetch(GET_RESTAURANT_MENU_ENDPOINT(id), {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching restaurant menu', errorText)
@@ -116,7 +120,9 @@ export async function GetRestaurantMenu({ id }) {
 
 export async function GetRestaurantsByUser({ userId }) {
   try {
-    const res = await fetch(GET_RESTAURANTS_BY_USER_ENDPOINT(userId))
+    const res = await fetch(GET_RESTAURANTS_BY_USER_ENDPOINT(userId), {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching restaurants by user', errorText)

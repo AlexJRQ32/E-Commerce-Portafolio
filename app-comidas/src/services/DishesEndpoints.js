@@ -1,4 +1,5 @@
 import { API_BASE_URL } from './apiConfig'
+import { authHeaders } from './authHelper'
 
 const DISHES_API = `${API_BASE_URL}/dishes`
 const GET_DISHES_ENDPOINT = DISHES_API
@@ -9,7 +10,9 @@ const DELETE_DISH_ENDPOINT = (id) => `${DISHES_API}/${id}`
 
 export async function GetDishes() {
   try {
-    const res = await fetch(GET_DISHES_ENDPOINT)
+    const res = await fetch(GET_DISHES_ENDPOINT, {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching dishes', errorText)
@@ -24,7 +27,9 @@ export async function GetDishes() {
 
 export async function GetDishById({ id }) {
   try {
-    const res = await fetch(GET_DISH_BY_ID_ENDPOINT(id))
+    const res = await fetch(GET_DISH_BY_ID_ENDPOINT(id), {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching dish by id', errorText)
@@ -41,9 +46,7 @@ export async function CreateDish({ dish }) {
   try {
     const res = await fetch(CREATE_DISH_ENDPOINT, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: authHeaders(),
       body: JSON.stringify(dish),
     })
     if (!res.ok) {
@@ -62,9 +65,7 @@ export async function UpdateDish({ id, dish }) {
   try {
     const res = await fetch(UPDATE_DISH_ENDPOINT(id), {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: authHeaders(),
       body: JSON.stringify(dish),
     })
     if (!res.ok) {
@@ -83,6 +84,7 @@ export async function DeleteDish({ id }) {
   try {
     const res = await fetch(DELETE_DISH_ENDPOINT(id), {
       method: 'DELETE',
+      headers: authHeaders(),
     })
     if (!res.ok) {
       const errorText = await res.text()

@@ -1,4 +1,5 @@
 import { API_BASE_URL } from './apiConfig'
+import { authHeaders } from './authHelper'
 
 const GENERAL_DATA_API = `${API_BASE_URL}/generaldata`
 const GET_CATEGORIES_ENDPOINT = `${GENERAL_DATA_API}/categories`
@@ -7,7 +8,9 @@ const GET_ROLES_ENDPOINT = `${GENERAL_DATA_API}/roles`
 
 export async function GetCategories() {
   try {
-    const res = await fetch(GET_CATEGORIES_ENDPOINT)
+    const res = await fetch(GET_CATEGORIES_ENDPOINT, {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching categories', errorText)
@@ -22,7 +25,9 @@ export async function GetCategories() {
 
 export async function GetPaymentMethods() {
   try {
-    const res = await fetch(GET_PAYMENT_METHODS_ENDPOINT)
+    const res = await fetch(GET_PAYMENT_METHODS_ENDPOINT, {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching payment methods', errorText)
@@ -37,7 +42,9 @@ export async function GetPaymentMethods() {
 
 export async function GetRoles() {
   try {
-    const res = await fetch(GET_ROLES_ENDPOINT)
+    const res = await fetch(GET_ROLES_ENDPOINT, {
+      headers: authHeaders(),
+    })
     if (!res.ok) {
       const errorText = await res.text()
       console.error('Error fetching roles', errorText)

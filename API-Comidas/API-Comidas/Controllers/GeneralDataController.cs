@@ -17,19 +17,23 @@ namespace API_Comidas.Controllers
             _context = context;
         }
 
-        [HttpGet("Categories")]
+        // Routes: categories, payment-methods, roles
+        // ASP.NET routing is case-insensitive, so /api/GeneralData/Categories also matches "categories"
+        // The frontend uses lowercase kebab-case: /api/generaldata/payment-methods
+
+        [HttpGet("categories")]
         public async Task<ActionResult<List<Category>>> GetCategories()
         {
             return await _context.Categories.ToListAsync();
         }
 
-        [HttpGet("PaymentMethods")]
+        [HttpGet("payment-methods")]
         public async Task<ActionResult<List<PaymentMethod>>> GetPaymentMethods()
         {
             return await _context.PaymentMethods.ToListAsync();
         }
 
-        [HttpGet("Roles")]
+        [HttpGet("roles")]
         public async Task<ActionResult<List<Role>>> GetRoles()
         {
             var roles = await _context.Roles.Where(r => r.Id == 2 || r.Id == 3).ToListAsync();

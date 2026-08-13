@@ -7,6 +7,7 @@ import { GetPaymentMethods } from '../services/GeneralDataEndpoints'
 import { GetRestaurants } from '../services/RestaurantsEndpoints'
 import { GetUserAddresses } from '../services/UsersEndpoints'
 import { GetRoles } from '../services/GeneralDataEndpoints'
+import { formatCurrency } from '../utils/format'
 import StatCards from '../mocks/statcards.json'
 
 export function useMappedObjects() {
@@ -16,7 +17,6 @@ export function useMappedObjects() {
     name: user.name,
     role: user.role,
     img: user.img,
-    password: user.password,
     phone: user.phone,
   }))
 
@@ -32,7 +32,7 @@ export function useMappedObjects() {
     img: dishe.img,
     category: dishe.category,
     description: dishe.description,
-    price: dishe.price,
+    price: formatCurrency(dishe.price),
     name: dishe.name,
   }))
 
@@ -79,7 +79,7 @@ export function useMappedObjects() {
     img: restaurant.Img,
     rating: restaurant.Rating,
     isOpen: restaurant.IsOpen,
-    deliveryFee: restaurant.DeliveryFee,
+    deliveryFee: formatCurrency(restaurant.DeliveryFee),
     deliveryTime: restaurant.DeliveryTime,
   }))
 

@@ -36,7 +36,7 @@ export function FormUser({ children, onEdit }) {
           id="new-password"
           name="new-password"
           className="custom-input"
-          defaultValue={onEdit ?? children[0].password}
+          defaultValue={onEdit ?? ''}
         />
       </div>
       <p>* Leave blank to not change</p>
