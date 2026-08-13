@@ -15,17 +15,14 @@ namespace API_Comidas.Models
         [Column("Restaurant")]
         public string Restaurant { get; set; } = string.Empty;
 
-        [Required]
         [StringLength(20)]
         [Column("Status")]
         public string Status { get; set; } = "Pending";
 
-        [Required]
         [StringLength(10)]
         [Column("Date")]
         public string Date { get; set; } = string.Empty;
 
-        [Required]
         [StringLength(10)]
         [Column("Time")]
         public string Time { get; set; } = string.Empty;
@@ -34,7 +31,6 @@ namespace API_Comidas.Models
         [Column("CouponCodeApplied")]
         public string? CouponCodeApplied { get; set; }
 
-        [Required]
         [Column("CustomerId")]
         public int CustomerId { get; set; }
 
@@ -55,11 +51,9 @@ namespace API_Comidas.Models
         [ForeignKey("AddressId")]
         public virtual Address? Address { get; set; }
 
-        [Required]
         [Column(TypeName = "decimal(10,2)")]
         public decimal Total { get; set; }
 
-        [Required]
         [Column("RestaurantId")]
         public int RestaurantId { get; set; }
 

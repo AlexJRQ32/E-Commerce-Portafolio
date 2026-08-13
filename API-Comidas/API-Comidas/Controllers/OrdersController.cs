@@ -5,12 +5,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API_Comidas.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
+    [EnableRateLimiting("general")]
     public class OrdersController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -269,20 +271,20 @@ namespace API_Comidas.Controllers
                 if (order.RestaurantId <= 0)
                     return BadRequest(new { message = "RestaurantId must be valid" });
 
-                // Validate FK string references before insert
-                if (!string.IsNullOrEmpty(order.AddressId))
-                {
-                    var addressExists = await _context.Addresses.AnyAsync(a => a.Id == order.AddressId);
-                    if (!addressExists)
-                        return BadRequest(new { message = $"Address with ID '{order.AddressId}' does not exist" });
-                }
+                // Validate FK string references — both are REQUIRED
+                if (string.IsNullOrWhiteSpace(order.AddressId))
+                    return BadRequest(new { message = "AddressId is required" });
 
-                if (!string.IsNullOrEmpty(order.PaymentMethodId))
-                {
-                    var paymentMethodExists = await _context.PaymentMethods.AnyAsync(p => p.Id.ToString() == order.PaymentMethodId);
-                    if (!paymentMethodExists)
-                        return BadRequest(new { message = $"PaymentMethod with ID '{order.PaymentMethodId}' does not exist" });
-                }
+                if (string.IsNullOrWhiteSpace(order.PaymentMethodId))
+                    return BadRequest(new { message = "PaymentMethodId is required" });
+
+                var addressExists = await _context.Addresses.AnyAsync(a => a.Id == order.AddressId);
+                if (!addressExists)
+                    return BadRequest(new { message = $"Address with ID '{order.AddressId}' does not exist" });
+
+                var paymentMethodExists = await _context.PaymentMethods.AnyAsync(p => p.Id == order.PaymentMethodId);
+                if (!paymentMethodExists)
+                    return BadRequest(new { message = $"PaymentMethod with ID '{order.PaymentMethodId}' does not exist" });
 
                 var customerExists = await _context.Users.AnyAsync(u => u.Id == order.CustomerId);
                 if (!customerExists)
@@ -292,31 +294,32 @@ namespace API_Comidas.Controllers
                 if (!restaurantExists)
                     return BadRequest(new { message = $"Restaurant with ID {order.RestaurantId} does not exist" });
 
+                // Order must have at least one item
+                if (order.Items == null || order.Items.Count == 0)
+                    return BadRequest(new { message = "Order must have at least one item" });
+
                 // Recalculate total server-side from REAL dish prices (anti-tampering)
-                if (order.Items != null && order.Items.Count > 0)
+                foreach (var item in order.Items)
                 {
-                    foreach (var item in order.Items)
-                    {
-                        var dish = await _context.Dishes.FindAsync(item.DishId);
-                        if (dish == null)
-                            return BadRequest(new { message = $"Dish with ID {item.DishId} does not exist" });
-                        item.Price = dish.Price; // Use real price from DB, ignore client price
-                    }
+                    var dish = await _context.Dishes.FindAsync(item.DishId);
+                    if (dish == null)
+                        return BadRequest(new { message = $"Dish with ID {item.DishId} does not exist" });
+                    item.Price = dish.Price; // Use real price from DB, ignore client price
+                }
 
-                    order.Total = order.Items.Sum(i => i.Price * i.Quantity);
+                order.Total = order.Items.Sum(i => i.Price * i.Quantity);
 
-                    // Optional: apply coupon discount if CouponCodeApplied is set
-                    if (!string.IsNullOrEmpty(order.CouponCodeApplied))
+                // Optional: apply coupon discount if CouponCodeApplied is set
+                if (!string.IsNullOrEmpty(order.CouponCodeApplied))
+                {
+                    var coupon = await _context.Coupons
+                        .FirstOrDefaultAsync(c => c.Code == order.CouponCodeApplied && c.Active && c.Stock > 0);
+                    if (coupon != null)
                     {
-                        var coupon = await _context.Coupons
-                            .FirstOrDefaultAsync(c => c.Code == order.CouponCodeApplied && c.Active && c.Stock > 0);
-                        if (coupon != null)
-                        {
-                            var discount = coupon.IsPercentage
-                                ? order.Total * (coupon.Discount / 100m)
-                                : coupon.Discount;
-                            order.Total = Math.Max(0, order.Total - discount);
-                        }
+                        var discount = coupon.IsPercentage
+                            ? order.Total * (coupon.Discount / 100m)
+                            : coupon.Discount;
+                        order.Total = Math.Max(0, order.Total - discount);
                     }
                 }
 
@@ -354,9 +357,6 @@ namespace API_Comidas.Controllers
 
                 if (order == null)
                     return BadRequest(new { message = "Order data cannot be null" });
-
-                if (id != order.Id)
-                    return BadRequest(new { message = "ID mismatch" });
 
                 // IDOR: verify ownership or Admin
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

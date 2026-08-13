@@ -24,17 +24,14 @@ namespace API_Comidas.Models
         [ForeignKey("DishId")]
         public virtual Dish? Dish { get; set; }
 
-        [Required]
         [Range(1, 1000)]
         [Column("Quantity")]
         public int Quantity { get; set; }
 
-        [Required]
         [StringLength(150)]
         [Column("Name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
-        [Required]
         [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
     }

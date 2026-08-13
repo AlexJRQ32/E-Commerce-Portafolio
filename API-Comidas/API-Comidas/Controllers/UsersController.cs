@@ -6,11 +6,13 @@ using API_Comidas.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.RegularExpressions;
 using System.Security.Claims;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API_Comidas.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("general")]
     public class UsersController : ControllerBase
     {
         private readonly AppDbContext _context;

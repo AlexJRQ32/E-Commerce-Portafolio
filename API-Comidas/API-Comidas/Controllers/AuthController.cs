@@ -19,6 +19,9 @@ namespace API_Comidas.Controllers
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthController> _logger;
 
+        // Pre-computed bcrypt hash for timing-attack mitigation (hash of "dummy-timing-mitigation")
+        private static readonly string DummyHash = BCrypt.Net.BCrypt.HashPassword("dummy-timing-mitigation-2024");
+
         public AuthController(AppDbContext context, IConfiguration configuration, ILogger<AuthController> logger)
         {
             _context = context;
@@ -52,6 +55,12 @@ namespace API_Comidas.Controllers
                     // Invalid hash format — treat as failed, never fallback to plaintext
                     passwordValid = false;
                 }
+            }
+            else
+            {
+                // Timing-attack mitigation: run a dummy verify so response time is the same
+                // whether the email exists or not (~200ms for both cases)
+                BCrypt.Net.BCrypt.Verify(dto.Password, DummyHash);
             }
 
             if (!passwordValid)

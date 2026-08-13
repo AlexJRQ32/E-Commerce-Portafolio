@@ -16,13 +16,10 @@ namespace API_Comidas.Models
         [Column("Name")]
         public string Name { get; set; } = string.Empty;
 
-        [Required]
-        [EmailAddress]
         [StringLength(150)]
         [Column("Email")]
         public string Email { get; set; } = string.Empty;
 
-        [Required]
         [StringLength(255)]
         [Column("Password")]
         public string Password { get; set; } = string.Empty;

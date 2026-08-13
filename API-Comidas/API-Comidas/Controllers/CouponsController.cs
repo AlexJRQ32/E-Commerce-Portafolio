@@ -39,9 +39,10 @@ namespace API_Comidas.Controllers
         {
             try
             {
+                var today = DateTime.Today.ToString("yyyy-MM-dd");
                 var coupons = await _context.Coupons
                     .Include(c => c.Restaurant)
-                    .Where(c => c.Active && c.Stock > 0)
+                    .Where(c => c.Active && c.Stock > 0 && c.ExpirationDate.CompareTo(today) >= 0)
                     .Select(c => new
                     {
                         c.Id,
@@ -168,6 +169,11 @@ namespace API_Comidas.Controllers
                 if (!coupon.Active || coupon.Stock <= 0)
                     return BadRequest(new { message = "Coupon is not available (inactive or out of stock)" });
 
+                // Validate coupon hasn't expired
+                var today = DateTime.Today.ToString("yyyy-MM-dd");
+                if (coupon.ExpirationDate.CompareTo(today) < 0)
+                    return BadRequest(new { message = "Coupon expired" });
+
                 // Check if already reserved by this user
                 var alreadyReserved = await _context.ReservedCoupons
                     .AnyAsync(rc => rc.CouponId == couponId && rc.UserId == userId);
@@ -182,6 +188,10 @@ namespace API_Comidas.Controllers
                 };
 
                 _context.ReservedCoupons.Add(reserved);
+
+                // Decrement stock
+                coupon.Stock = coupon.Stock > 0 ? coupon.Stock - 1 : 0;
+
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation($"Coupon {couponId} reserved by user {userId}");

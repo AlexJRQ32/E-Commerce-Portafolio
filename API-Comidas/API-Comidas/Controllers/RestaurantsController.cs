@@ -138,7 +138,7 @@ namespace API_Comidas.Controllers
                         r.DeliveryTime,
                         Dishes = r.Dishes.Select(d => new { d.Id, d.Name, d.Price, d.Description, d.Img }).ToList(),
                         Coupons = r.Coupons.Select(c => new { c.Id, c.Code, c.Title, c.Discount, c.IsPercentage, c.Active }).ToList(),
-                        User = r.User != null ? new { r.User.Id, r.User.Name, r.User.Email, r.User.Img } : null
+                        User = r.User != null ? new { r.User.Id, r.User.Name, r.User.Img } : null
                     })
                     .ToListAsync();
 
@@ -186,7 +186,7 @@ namespace API_Comidas.Controllers
                     restaurant.DeliveryTime,
                     Dishes = restaurant.Dishes.Select(d => new { d.Id, d.Name, d.Price, d.Description, d.Img }).ToList(),
                     Coupons = restaurant.Coupons.Select(c => new { c.Id, c.Code, c.Title, c.Discount, c.IsPercentage, c.Active }).ToList(),
-                    User = restaurant.User != null ? new { restaurant.User.Id, restaurant.User.Name, restaurant.User.Email, restaurant.User.Img } : null
+                    User = restaurant.User != null ? new { restaurant.User.Id, restaurant.User.Name, restaurant.User.Img } : null
                 };
 
                 return Ok(result);
