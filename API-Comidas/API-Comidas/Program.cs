@@ -98,25 +98,30 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
+
+// N4 (FIX): Forwarded headers MUST be first — before HSTS, CORS, RateLimiter.
+// ForwardLimit=2 trusts only the first 2 hops of X-Forwarded-For, preventing
+// client-side spoofing while still working behind Cloudflare/Render edge proxies.
+// KnownProxies is intentionally NOT set (would break dynamic edge IPs); ForwardLimit
+// is the pragmatic mitigation against XFF spoofing.
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+    ForwardLimit = 2
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 else
 {
+    // HSTS after ForwardedHeaders so the scheme is correctly resolved as https behind a proxy
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
-
-// N4 (FIX): Forwarded headers for Render proxy — ensures RemoteIpAddress is the real client IP
-// for rate limiting and HSTS. In localhost (no proxy) this is a no-op.
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-});
-
 app.UseRateLimiter();
 
 // Security headers middleware

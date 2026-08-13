@@ -25,6 +25,7 @@ namespace API_Comidas.Models
         public string Description { get; set; }
 
         [Required]
+        [Range(0, 100000)]
         [Column(TypeName = "decimal(10,2)")]
         public decimal Discount { get; set; }
 

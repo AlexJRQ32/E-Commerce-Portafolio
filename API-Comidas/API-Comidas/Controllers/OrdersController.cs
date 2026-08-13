@@ -208,10 +208,14 @@ namespace API_Comidas.Controllers
                 if (order == null)
                     return NotFound(new { message = $"Order with ID {id} not found" });
 
-                // IDOR: verify the authenticated user owns this order or is Admin
+                // NEW-4 (FIX): IDOR — allow customer, Admin, OR business owner of the restaurant
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
-                if (roleClaim != "Admin" && userIdClaim != order.CustomerId.ToString())
+                bool isCustomer = userIdClaim == order.CustomerId.ToString();
+                bool isAdmin = roleClaim == "Admin";
+                bool isBusinessOwner = order.RestaurantRef?.UserId.ToString() == userIdClaim;
+
+                if (!isCustomer && !isAdmin && !isBusinessOwner)
                     return Forbid();
 
                 var result = new
@@ -341,6 +345,11 @@ namespace API_Comidas.Controllers
                 if (order.Total <= 0)
                     return BadRequest(new { message = "Total must be greater than 0" });
 
+                // N6 (FIX): Force Status, Date, Time — prevent mass assignment from client body
+                order.Status = "Pendiente";
+                order.Date = DateTime.Now.ToString("yyyy-MM-dd");
+                order.Time = DateTime.Now.ToString("HH:mm");
+
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
 
@@ -375,7 +384,7 @@ namespace API_Comidas.Controllers
                 if (order == null)
                     return BadRequest(new { message = "Order data cannot be null" });
 
-                // N5 (FIX): Ownership — customer, Admin, OR restaurant owner (business)
+                // Ownership — customer, Admin, OR restaurant owner (business)
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
                 if (string.IsNullOrEmpty(userIdClaim))
@@ -390,28 +399,55 @@ namespace API_Comidas.Controllers
                     return Forbid();
 
                 // Only Status is editable via update. Total is immutable after creation.
+                if (string.IsNullOrEmpty(order.Status))
+                    return NoContent(); // Nothing to update
+
                 // Validate status values
                 var validStatuses = new[] { "Pendiente", "En proceso", "Entregado", "Cancelado" };
-                if (!string.IsNullOrEmpty(order.Status) && !validStatuses.Contains(order.Status))
+                if (!validStatuses.Contains(order.Status))
                     return BadRequest(new { message = $"Invalid status. Valid values: {string.Join(", ", validStatuses)}" });
 
-                // N5 (FIX): Business owners can only set kitchen states (not "Pendiente" which is the initial customer state)
-                // Customers and Admins can set any valid status
-                if (isBusinessOwner && !isAdmin)
+                // NEW-2 (FIX): State machine — validate status transitions
+                string currentStatus = existingOrder.Status;
+                string newStatus = order.Status;
+
+                // Define allowed transitions: from → [allowed targets]
+                var allowedTransitions = new Dictionary<string, HashSet<string>>
                 {
-                    var businessAllowedStatuses = new[] { "En proceso", "Entregado", "Cancelado" };
-                    if (!string.IsNullOrEmpty(order.Status) && !businessAllowedStatuses.Contains(order.Status))
-                        return BadRequest(new { message = $"Business owners can only set status to: {string.Join(", ", businessAllowedStatuses)}" });
+                    { "Pendiente", new HashSet<string> { "En proceso", "Cancelado" } },
+                    { "En proceso", new HashSet<string> { "Entregado", "Cancelado" } },
+                    { "Entregado", new HashSet<string> { "Cancelado" } }, // Only Admin can cancel delivered
+                    { "Cancelado", new HashSet<string>() } // Terminal state
+                };
+
+                if (!allowedTransitions.TryGetValue(currentStatus, out var allowed) || !allowed.Contains(newStatus))
+                {
+                    return BadRequest(new { message = $"Invalid status transition from {currentStatus} to {newStatus}" });
                 }
 
-                if (!string.IsNullOrEmpty(order.Status))
-                    existingOrder.Status = order.Status;
+                // Role-specific restrictions on top of the state machine:
+                // Customer: can only cancel (to "Cancelado") from Pendiente or En proceso
+                if (isCustomer && !isAdmin)
+                {
+                    if (newStatus != "Cancelado")
+                        return BadRequest(new { message = "Customers can only cancel orders" });
+                }
+
+                // Business owner: cannot cancel from "Entregado" (only Admin can rectify)
+                if (isBusinessOwner && !isAdmin)
+                {
+                    if (currentStatus == "Entregado" && newStatus == "Cancelado")
+                        return BadRequest(new { message = "Only administrators can cancel a delivered order" });
+                    // Business cannot cancel from Pendiente — they can only process
+                    if (currentStatus == "Pendiente" && newStatus == "Cancelado")
+                        return BadRequest(new { message = "Business owners cannot cancel pending orders" });
+                }
+
+                existingOrder.Status = newStatus;
 
                 // Total, Date, Time, CouponCodeApplied are NOT editable after creation
-                // (Total is recalculated server-side on creation; Date/Time are set at checkout)
-
                 await _context.SaveChangesAsync();
-                _logger.LogInformation($"Order updated: {id}");
+                _logger.LogInformation($"Order updated: {id}, status: {newStatus}");
                 return NoContent();
             }
             catch (DbUpdateConcurrencyException ex)

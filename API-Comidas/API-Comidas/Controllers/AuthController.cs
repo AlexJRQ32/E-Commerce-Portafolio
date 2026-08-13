@@ -65,7 +65,7 @@ namespace API_Comidas.Controllers
 
             if (!passwordValid)
             {
-                _logger.LogWarning("Login fallido para email {Email}", dto.Email);
+                _logger.LogWarning("Intento de login fallido desde IP {RemoteIp}", HttpContext.Connection.RemoteIpAddress);
                 return Unauthorized("Credenciales incorrectas.");
             }
 
@@ -120,10 +120,11 @@ namespace API_Comidas.Controllers
             if (dto.RoleId != 2 && dto.RoleId != 3)
                 return BadRequest("RoleId inválido. Debe ser 2 (Business) o 3 (Customer).");
 
-            // Anti-enumeration: if email exists, return neutral success (same response shape)
+            // Anti-enumeration: if email exists, return same response shape as success
+            // (same HTTP status, same fields — UserId=0 signals "no new account created")
             if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
             {
-                return Ok(new { Message = "Solicitud procesada" });
+                return Ok(new { Message = "Solicitud procesada", UserId = 0, RoleId = 0 });
             }
 
             var user = new User

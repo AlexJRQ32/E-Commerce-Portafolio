@@ -149,6 +149,43 @@ namespace API_Comidas.Controllers
             }
         }
 
+        // NEW-5 (FIX): POST endpoint to create addresses
+        [HttpPost("{userId}/addresses")]
+        [Authorize]
+        public async Task<ActionResult> CreateUserAddress(int userId, [FromBody] CreateAddressDto dto)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            // Only the user themselves or Admin can create an address for that user
+            if (roleClaim != "Admin" && userIdClaim != userId.ToString())
+                return Forbid();
+
+            if (dto == null || string.IsNullOrWhiteSpace(dto.Name))
+                return BadRequest(new { message = "Address name is required" });
+
+            // Sanitize Name: letters, numbers, spaces, accents, n-tilde, hyphens, periods, commas
+            if (!Regex.IsMatch(dto.Name, @"^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-\.\,]+$"))
+                return BadRequest(new { message = "Address name can only contain letters, numbers, spaces, accents, hyphens, periods, and commas" });
+
+            var address = new Address
+            {
+                Id = Guid.NewGuid().ToString("N"),
+                Name = dto.Name,
+                UserId = userId
+            };
+
+            _context.Addresses.Add(address);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetUserAddresses), new { userId }, new
+            {
+                address.Id,
+                address.Name,
+                address.UserId
+            });
+        }
+
         // === Original routes (kept for backward compatibility) ===
 
         [Authorize(Roles = "Admin")]
