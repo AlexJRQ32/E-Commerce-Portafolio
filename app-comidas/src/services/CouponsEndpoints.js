@@ -1,4 +1,6 @@
-const COUPONS_API = 'https://www.apirest-comidas.somee.com/api/coupons'
+import { API_BASE_URL } from './apiConfig'
+
+const COUPONS_API = `${API_BASE_URL}/coupons`
 const GET_COUPONS_ENDPOINT = COUPONS_API
 const GET_COUPON_BY_ID_ENDPOINT = (id) => `${COUPONS_API}/${id}`
 const CREATE_COUPON_ENDPOINT = COUPONS_API
@@ -21,7 +23,7 @@ export async function GetCoupons() {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -36,7 +38,7 @@ export async function GetCouponById({ id }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -57,7 +59,7 @@ export async function CreateCoupon({ coupon }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -78,7 +80,7 @@ export async function UpdateCoupon({ id, coupon }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -95,7 +97,7 @@ export async function DeleteCoupon({ id }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -110,7 +112,7 @@ export async function GetAvailableCoupons() {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -125,7 +127,7 @@ export async function GetReservedCoupons({ userId }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -140,7 +142,7 @@ export async function GetCouponsByUser({ userId }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -157,7 +159,7 @@ export async function ReserveCoupon({ couponId, userId }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }

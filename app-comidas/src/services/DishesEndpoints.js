@@ -1,4 +1,6 @@
-const DISHES_API = 'https://www.apirest-comidas.somee.com/api/dishes'
+import { API_BASE_URL } from './apiConfig'
+
+const DISHES_API = `${API_BASE_URL}/dishes`
 const GET_DISHES_ENDPOINT = DISHES_API
 const GET_DISH_BY_ID_ENDPOINT = (id) => `${DISHES_API}/${id}`
 const CREATE_DISH_ENDPOINT = DISHES_API
@@ -15,7 +17,7 @@ export async function GetDishes() {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -30,7 +32,7 @@ export async function GetDishById({ id }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -51,7 +53,7 @@ export async function CreateDish({ dish }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -72,7 +74,7 @@ export async function UpdateDish({ id, dish }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -89,7 +91,7 @@ export async function DeleteDish({ id }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }

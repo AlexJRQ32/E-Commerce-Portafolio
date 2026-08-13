@@ -1,4 +1,6 @@
-const ORDERS_API = 'https://www.apirest-comidas.somee.com/api/orders'
+import { API_BASE_URL } from './apiConfig'
+
+const ORDERS_API = `${API_BASE_URL}/orders`
 const CREATE_ORDER_ENDPOINT = ORDERS_API
 const GET_ORDERS_ENDPOINT = ORDERS_API
 const GET_ORDER_BY_ID_ENDPOINT = (id) => `${ORDERS_API}/${id}`
@@ -23,7 +25,7 @@ export async function CreateOrder({ order }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -38,7 +40,7 @@ export async function GetOrders() {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -53,7 +55,7 @@ export async function GetOrderById({ id }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -68,7 +70,7 @@ export async function GetOrdersByUser({ userId }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -83,7 +85,7 @@ export async function GetOrdersByRestaurant({ restaurantId }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -104,7 +106,7 @@ export async function UpdateOrder({ id, order }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }

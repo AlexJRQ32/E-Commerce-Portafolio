@@ -1,4 +1,4 @@
-﻿using API_Comidas.Data;
+using API_Comidas.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using API_Comidas.Models;
@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API_Comidas.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class GeneralDataController : ControllerBase
     {

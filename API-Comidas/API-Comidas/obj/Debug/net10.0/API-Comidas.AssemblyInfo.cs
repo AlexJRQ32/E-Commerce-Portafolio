@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("API-Comidas")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+98c56abe911816b12c7e7b47d8bea27b431f589c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+91f6ad15064c3545257a2a3b4ff00fc88d44a193")]
 [assembly: System.Reflection.AssemblyProductAttribute("API-Comidas")]
 [assembly: System.Reflection.AssemblyTitleAttribute("API-Comidas")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

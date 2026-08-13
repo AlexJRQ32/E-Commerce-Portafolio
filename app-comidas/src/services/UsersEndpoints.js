@@ -1,4 +1,6 @@
-const USERS_API = 'https://www.apirest-comidas.somee.com/api/users'
+import { API_BASE_URL } from './apiConfig'
+
+const USERS_API = `${API_BASE_URL}/users`
 const GET_USERS_ENDPOINT = USERS_API
 const GET_USER_BY_ID_ENDPOINT = (id) => `${USERS_API}/${id}`
 const CREATE_USER_ENDPOINT = USERS_API
@@ -17,7 +19,7 @@ export async function GetUsers() {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -32,7 +34,7 @@ export async function GetUserById({ id }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -53,7 +55,7 @@ export async function CreateUser({ user }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -74,7 +76,7 @@ export async function UpdateUser({ id, user }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -91,7 +93,7 @@ export async function DeleteUser({ id }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -106,7 +108,7 @@ export async function GetUserAddresses({ userId }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }

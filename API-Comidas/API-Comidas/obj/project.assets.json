@@ -2301,11 +2301,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\roble\\OneDrive\\Documentos\\Repos\\React\\App-Comidas\\API-Comidas\\API-Comidas\\API-Comidas.csproj",
+      "projectUniqueName": "C:\\Users\\roble\\OneDrive\\Documentos\\Repos\\E-Commerce-Portafolio\\API-Comidas\\API-Comidas\\API-Comidas.csproj",
       "projectName": "API-Comidas",
-      "projectPath": "c:\\Users\\roble\\OneDrive\\Documentos\\Repos\\React\\App-Comidas\\API-Comidas\\API-Comidas\\API-Comidas.csproj",
+      "projectPath": "C:\\Users\\roble\\OneDrive\\Documentos\\Repos\\E-Commerce-Portafolio\\API-Comidas\\API-Comidas\\API-Comidas.csproj",
       "packagesPath": "C:\\Users\\roble\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\roble\\OneDrive\\Documentos\\Repos\\React\\App-Comidas\\API-Comidas\\API-Comidas\\obj\\",
+      "outputPath": "C:\\Users\\roble\\OneDrive\\Documentos\\Repos\\E-Commerce-Portafolio\\API-Comidas\\API-Comidas\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

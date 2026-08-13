@@ -1,4 +1,6 @@
-const GENERAL_DATA_API = 'https://www.apirest-comidas.somee.com/api/generaldata'
+import { API_BASE_URL } from './apiConfig'
+
+const GENERAL_DATA_API = `${API_BASE_URL}/generaldata`
 const GET_CATEGORIES_ENDPOINT = `${GENERAL_DATA_API}/categories`
 const GET_PAYMENT_METHODS_ENDPOINT = `${GENERAL_DATA_API}/payment-methods`
 const GET_ROLES_ENDPOINT = `${GENERAL_DATA_API}/roles`
@@ -13,7 +15,7 @@ export async function GetCategories() {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -28,7 +30,7 @@ export async function GetPaymentMethods() {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -43,7 +45,7 @@ export async function GetRoles() {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }

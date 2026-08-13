@@ -1,4 +1,6 @@
-const AUTH_API = 'https://www.apirest-comidas.somee.com/api/auth'
+import { API_BASE_URL } from './apiConfig'
+
+const AUTH_API = `${API_BASE_URL}/auth`
 const LOGIN_ENDPOINT = `${AUTH_API}/login`
 const REGISTER_ENDPOINT = `${AUTH_API}/register`
 
@@ -20,7 +22,7 @@ export async function Login({ user }) {
 
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -43,7 +45,7 @@ export async function Register({ user }) {
 
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }

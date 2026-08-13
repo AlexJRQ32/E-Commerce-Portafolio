@@ -1,4 +1,4 @@
-﻿using API_Comidas.Data;
+using API_Comidas.Data;
 using API_Comidas.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace API_Comidas.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;

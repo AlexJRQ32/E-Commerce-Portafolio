@@ -1,4 +1,6 @@
-const RESTAURANTS_API = 'https://www.apirest-comidas.somee.com/restaurants'
+import { API_BASE_URL } from './apiConfig'
+
+const RESTAURANTS_API = `${API_BASE_URL}/restaurants`
 const GET_RESTAURANTS_ENDPOINT = RESTAURANTS_API
 const GET_RESTAURANT_BY_ID_ENDPOINT = (id) => `${RESTAURANTS_API}/${id}`
 const CREATE_RESTAURANT_ENDPOINT = RESTAURANTS_API
@@ -18,7 +20,7 @@ export async function GetRestaurants() {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -33,7 +35,7 @@ export async function GetRestaurantById({ id }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -54,7 +56,7 @@ export async function CreateRestaurant({ restaurant }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -75,7 +77,7 @@ export async function UpdateRestaurant({ id, restaurant }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -92,7 +94,7 @@ export async function DeleteRestaurant({ id }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -107,7 +109,7 @@ export async function GetRestaurantMenu({ id }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }
@@ -122,7 +124,7 @@ export async function GetRestaurantsByUser({ userId }) {
     }
     return await res.json()
   } catch (error) {
-    console.error('Error syncing with Somee', error)
+    console.error('Error syncing with backend', error)
     return null
   }
 }

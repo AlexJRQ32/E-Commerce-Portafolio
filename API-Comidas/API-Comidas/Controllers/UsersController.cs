@@ -1,4 +1,4 @@
-﻿    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using API_Comidas.Data;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +6,7 @@ using API_Comidas.Models;
 
 namespace API_Comidas.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {

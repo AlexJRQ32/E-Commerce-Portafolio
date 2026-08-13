@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "QcU3cRtRnII=",
+  "dgSpecHash": "6YweFpDrrzk=",
   "success": true,
-  "projectFilePath": "c:\\Users\\roble\\OneDrive\\Documentos\\Repos\\React\\App-Comidas\\API-Comidas\\API-Comidas\\API-Comidas.csproj",
+  "projectFilePath": "C:\\Users\\roble\\OneDrive\\Documentos\\Repos\\E-Commerce-Portafolio\\API-Comidas\\API-Comidas\\API-Comidas.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\roble\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\roble\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",
@@ -55,9 +55,9 @@
       "code": "NU1903",
       "level": "Warning",
       "message": "El paquete \"Microsoft.OpenApi\" 2.0.0 tiene una vulnerabilidad de gravedad alta conocida, https://github.com/advisories/GHSA-v5pm-xwqc-g5wc",
-      "projectPath": "c:\\Users\\roble\\OneDrive\\Documentos\\Repos\\React\\App-Comidas\\API-Comidas\\API-Comidas\\API-Comidas.csproj",
+      "projectPath": "C:\\Users\\roble\\OneDrive\\Documentos\\Repos\\E-Commerce-Portafolio\\API-Comidas\\API-Comidas\\API-Comidas.csproj",
       "warningLevel": 1,
-      "filePath": "c:\\Users\\roble\\OneDrive\\Documentos\\Repos\\React\\App-Comidas\\API-Comidas\\API-Comidas\\API-Comidas.csproj",
+      "filePath": "C:\\Users\\roble\\OneDrive\\Documentos\\Repos\\E-Commerce-Portafolio\\API-Comidas\\API-Comidas\\API-Comidas.csproj",
       "libraryId": "Microsoft.OpenApi",
       "targetGraphs": [
         "net10.0"
