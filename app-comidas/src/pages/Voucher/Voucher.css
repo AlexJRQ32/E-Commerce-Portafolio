@@ -1,0 +1,94 @@
+.section-voucher{
+  width: 400px;
+  background-color: var(--bg-surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 35px;
+  box-sizing: border-box;
+  border-radius: var(--radius-20);
+  box-shadow: var(--shadow-main);
+  text-align: center;
+}
+
+.voucher-header{
+  width: 100%;
+  padding-bottom: 20px;
+  border-bottom: 3px dashed var(--border-color) ;
+}
+
+.voucher-title p, .voucher-title h1{
+  margin: 0;
+}
+
+.voucher-title h1{
+  font-weight: 900;
+}
+
+.product-line{
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 10px;
+  box-sizing: border-box;
+  width: 100%;
+  border-bottom: 3px dashed var(--border-color) ;
+}
+
+.voucher-body{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 10px;
+  gap: 10px;
+  box-sizing: border-box;
+  border-bottom: 2px solid ;
+}
+
+.total-row{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.total{
+  width: 100%;
+  padding: 20px 10px ;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+}
+
+.voucher-footer{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  padding: 0 10px 20px 10px;
+  box-sizing: border-box;
+}
+
+.voucher-footer a{
+  font-size: 14px;
+  color: var(--brand-primary);
+  display: flex;
+  justify-content: center;
+}
+
+.voucher-footer i{
+  margin: 10px 0;
+}
+
+.voucher-footer p{
+  margin: 0 ;
+}
+
+.voucher-footer button{
+  width: 100%;
+  font-weight: 900;
+  gap: 5px;
+}
+
+.voucher-footer a:hover{
+  color: var(--border-color);
+  transition: var(--transition-standard);
+}

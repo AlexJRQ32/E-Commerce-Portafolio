@@ -1,0 +1,80 @@
+[
+  {
+    "Id": 1,
+    "TradeName": "McDonald's",
+    "Address": "Tibás centro",
+    "CategoryId": 1,
+    "OpeningTime": "06:00",
+    "ClosingTime": "00:00",
+    "Img": "https://pngimg.com/uploads/mcdonalds/mcdonalds_PNG17.png",
+    "Rating": "4.5",
+    "IsOpen": true,
+    "DeliveryFee": "₡1,000",
+    "DeliveryTime": "30 min"
+  },
+  {
+    "Id": 2,
+    "TradeName": "Pizza Hut",
+    "Address": "San José centro",
+    "CategoryId": 2,
+    "OpeningTime": "11:00",
+    "ClosingTime": "23:00",
+    "Img": "https://logos-marcas.com/wp-content/uploads/2021/10/Pizza-Hut-Emblema.png",
+    "Rating": "4.3",
+    "IsOpen": true,
+    "DeliveryFee": "₡1,200",
+    "DeliveryTime": "35 min"
+  },
+  {
+    "Id": 3,
+    "TradeName": "Taco Bell",
+    "Address": "San Pedro",
+    "CategoryId": 3,
+    "OpeningTime": "10:00",
+    "ClosingTime": "22:00",
+    "Img": "https://logos-world.net/wp-content/uploads/2021/10/Taco-Bell-Emblem.png",
+    "Rating": "4.4",
+    "IsOpen": true,
+    "DeliveryFee": "₡1,100",
+    "DeliveryTime": "25 min"
+  },
+  {
+    "Id": 4,
+    "TradeName": "KFC",
+    "Address": "Tibás centro",
+    "CategoryId": 4,
+    "OpeningTime": "11:00",
+    "ClosingTime": "22:00",
+    "Img": "https://static.vecteezy.com/system/resources/previews/024/693/620/original/kfc-logo-transparent-free-png.png",
+    "Rating": "4.2",
+    "IsOpen": true,
+    "DeliveryFee": "₡1,000",
+    "DeliveryTime": "30 min"
+  },
+  {
+    "Id": 5,
+    "TradeName": "Burger King",
+    "Address": "Tibás centro",
+    "CategoryId": 5,
+    "OpeningTime": "07:00",
+    "ClosingTime": "23:00",
+    "Img": "https://logos-world.net/wp-content/uploads/2020/04/Burger-King-Logo-1994-1999.png",
+    "Rating": "4.1",
+    "IsOpen": true,
+    "DeliveryFee": "₡1,000",
+    "DeliveryTime": "30 min"
+  },
+  {
+    "Id": 6,
+    "TradeName": "Ready Pizza",
+    "Address": "Guadalupe",
+    "CategoryId": 6,
+    "OpeningTime": "11:00",
+    "ClosingTime": "22:00",
+    "Img": "https://readypizzapa.com/og.jpg",
+    "Rating": "4.6",
+    "IsOpen": true,
+    "DeliveryFee": "₡900",
+    "DeliveryTime": "20 min"
+  }
+]

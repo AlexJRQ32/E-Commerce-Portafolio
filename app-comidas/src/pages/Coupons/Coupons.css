@@ -1,0 +1,23 @@
+.coupons-section{
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  background-color: var(--bg-surface-elevated);
+  border-radius: var(--radius-main);
+  border: 10px solid var(--brand-soft);
+  margin: 20px 0 40px 0;
+  box-shadow: var(--shadow-main);
+}
+
+.coupons-header{
+  padding-bottom: 20px;
+}
+
+.coupons-body{
+  width: 80%;
+  padding-bottom: 40px;
+}
+

@@ -1,0 +1,104 @@
+:root {
+  /* --- FONDO / BACKGROUNDS --- */
+  --bg-main: #141216; /* Fondo base de la app */
+  --bg-main-rgb: 20, 18, 22;
+  --bg-surface: #1e1c22; /* Tarjetas, contenedores principales */
+  --bg-surface-elevated: #28262c; /* Modales o elementos flotantes */
+  --bg-section-alt: #060606; /* Secciones secundarias o laterales */
+  --bg-alternative: #333;
+  --blur-bg: rgba(12, 18, 20, 0.3); /* Fondo para modales con efecto blur */
+  --auth-bg-gradient: linear-gradient(
+    135deg,
+    #1c1418 0%,
+    #3b2518 25%,
+    #261a24 50%,
+    #4d3222 75%,
+    #1c1418 100%
+  );
+
+  /* --- TEXTO --- */
+  --text-primary: #ece4da; /* Títulos y cuerpo principal */
+  --text-primary-rgb: 236, 228, 218;
+  --text-secondary: #9a8e82; /* Subtítulos o texto desactivado */
+  --text-on-accent: #141216; /* Texto que va sobre el color de acento */
+
+  /* --- ACENTOS Y MARCA --- */
+  --brand-primary: #d3ab80; /* Color principal de la marca (botones, links) */
+  --brand-primary-rgb: 211, 171, 128;
+  --brand-soft: rgba(
+    211,
+    171,
+    128,
+    0.35
+  ); /* Fondo sutil para elementos activos */
+  --border-color: rgba(211, 171, 128, 0.24);
+
+  /* --- NAVEGACIÓN (Sidebar/Header) --- */
+  --nav-bg: rgba(30, 28, 34, 0.94);
+  --nav-text: #ece4da;
+  --nav-hover: rgba(211, 171, 128, 0.18);
+
+  /* --- ESTADOS --- */
+  --status-error: #ff6b6b;
+  --status-error-bg: rgba(220, 38, 38, 0.2);
+  --status-success: #28b463;
+  --status-success-bg: #1b2820;
+  --status-warning: #fdd835;
+  --status-warning-bg: rgba(251, 192, 45, 0.15);
+
+  /* --- COMPONENTES ESPECÍFICOS --- */
+  --modal-bg: #2a252b;
+  --modal-overlay: rgba(0, 0, 0, 0.6);
+  --input-bg: #141216;
+  --input-border: #4a404a;
+
+  /* --- EFECTOS --- */
+  --shadow-main: 0 8px 30px rgba(0, 0, 0, 0.4);
+  --shadow-secondary: 0 2px 10px rgba(var(--brand-primary-rgb), 0.4);
+  --transition-standard: all 0.3s ease;
+  --transition-slow: all 0.5s ease;
+  --radius-main: 15px;
+  --radius-secondary: 7px;
+  --radius-20: 20px;
+  --radius-large: 45px; /* Para modales según tu código */
+  --footer-gradient: linear-gradient(180deg, #1e1c22 0%, #141216 100%);
+  --transform-standard: -8px;
+  --transform-secondary: -5px;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover, 
+select:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--bg-surface) inset !important;
+  
+  -webkit-text-fill-color: var(--text-primary) !important;
+  
+  transition: background-color var(--transition-slow);
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  background: transparent;
+  bottom: 0;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: auto;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, a{
+  margin: 0;
+}

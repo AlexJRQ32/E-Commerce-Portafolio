@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "name": "Customer",
+    "subtitle": "Order food",
+    "site": "/",
+    "icon": "user"
+  },
+  {
+    "id": 2,
+    "name": "Business",
+    "subtitle": "Register your restaurant",
+    "site": "/auth/register-business",
+    "icon": "store"
+  }
+]

@@ -1,0 +1,7 @@
+c:\Users\roble\OneDrive\Documentos\Repos\React\App-Comidas\API-Comidas\API-Comidas.Tests\obj\Debug\net10.0\API-Comidas.Tests.csproj.AssemblyReference.cache
+c:\Users\roble\OneDrive\Documentos\Repos\React\App-Comidas\API-Comidas\API-Comidas.Tests\obj\Debug\net10.0\MvcTestingAppManifest.json
+c:\Users\roble\OneDrive\Documentos\Repos\React\App-Comidas\API-Comidas\API-Comidas.Tests\obj\Debug\net10.0\API-Comidas.Tests.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\roble\OneDrive\Documentos\Repos\React\App-Comidas\API-Comidas\API-Comidas.Tests\obj\Debug\net10.0\API-Comidas.Tests.AssemblyInfoInputs.cache
+c:\Users\roble\OneDrive\Documentos\Repos\React\App-Comidas\API-Comidas\API-Comidas.Tests\obj\Debug\net10.0\API-Comidas.Tests.AssemblyInfo.cs
+c:\Users\roble\OneDrive\Documentos\Repos\React\App-Comidas\API-Comidas\API-Comidas.Tests\obj\Debug\net10.0\API-Comidas.Tests.csproj.CoreCompileInputs.cache
+c:\Users\roble\OneDrive\Documentos\Repos\React\App-Comidas\API-Comidas\API-Comidas.Tests\obj\Debug\net10.0\API-Comidas.Tests.sourcelink.json

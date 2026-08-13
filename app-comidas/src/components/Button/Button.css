@@ -1,0 +1,130 @@
+.btn-redirect {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--text-on-accent);
+  background-color: var(--brand-primary);
+  width: max-content;
+  padding: 8px 12px;
+  border-radius: var(--radius-main);
+  border: 2px solid var(--border-color);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.btn-redirect i {
+  font-size: 14px;
+}
+
+.btn-redirect:hover {
+  background-color: var(--brand-soft);
+  color: var(--brand-primary);
+  transform: translateY(var(--transform-standard));
+  transition: var(--transition-standard);
+}
+
+.btn-action-large {
+  color: var(--text-on-accent);
+  background-color: var(--brand-primary);
+  width: 100%;
+  padding: 12px 8px;
+  border-radius: var(--radius-20);
+  border: none;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.btn-action-large:hover {
+  background-color: var(--brand-soft);
+  color: var(--brand-primary);
+  transform: translateY(var(--transform-standard));
+  transition: var(--transition-standard);
+}
+
+.btn-confirm{
+  width: 100%;
+}
+
+.btn-action {
+  color: var(--text-on-accent);
+  background-color: var(--brand-primary);
+  width: 48px;
+  height: 48px;
+  border-radius: 7px;
+  border: none;
+}
+
+.btn-action:hover {
+  background-color: var(--brand-soft);
+  color: var(--brand-primary);
+  transform: translateY(var(--transform-standard));
+  transition: var(--transition-standard);
+}
+
+.btn-delete {
+  border-radius: 50%;
+}
+
+.btn-edit {
+  border-radius: 50%;
+}
+
+.btn-add {
+  border-radius: 50%;
+}
+
+.btn-black {
+  padding: 16px 24px;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-size: 16px;
+  border: none;
+  box-shadow: var(--shadow-main);
+}
+
+.btn-black:hover {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 2px solid var(--text-primary);
+}
+
+.btn-clear {
+  padding: 16px 24px;
+  background-color: transparent;
+  color: var(--text-primary);
+  font-size: 16px;
+  border: none;
+  box-shadow: var(--shadow-main);
+}
+
+.btn-clear:hover {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  border: 2px solid var(--text-primary);
+}
+
+.btn-exit {
+  width: 100%;
+  color: var(--status-error);
+  background-color: var(--status-error-bg);
+}
+
+.btn-exit:hover {
+  color: var(--status-error);
+  background-color: var(--status-error-bg);
+  border: 2px solid var(--status-error);
+}
+
+.btn-close {
+  color: var(--text-primary);
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+}
+
+.btn-close:hover {
+  color: var(--text-primary);
+  background-color: transparent;
+  border: 2px solid var(--text-primary);
+}

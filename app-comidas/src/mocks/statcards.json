@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Locations",
+    "value": 8,
+    "icon": "shop",
+    "site": "/dashboard/restaurants"
+  },
+  {
+    "id": 2,
+    "title": "Dishes",
+    "value": 5,
+    "icon": "utensils",
+    "site": "/dashboard/my-menu"
+  },
+  {
+    "id": 3,
+    "title": "Users",
+    "value": 26,
+    "icon": "users",
+    "site": "/dashboard/users"
+  },
+  {
+    "id": 4,
+    "title": "Coupons",
+    "value": 12,
+    "icon": "ticket",
+    "site": "/dashboard/coupons-dashboard"
+  }
+]

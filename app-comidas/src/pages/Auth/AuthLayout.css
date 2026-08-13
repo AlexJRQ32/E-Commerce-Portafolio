@@ -1,0 +1,65 @@
+.auth-layout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--bg-main);
+  background-image: var(--auth-bg-gradient);
+  background-attachment: fixed;
+  background-size: 200% 200%;
+  animation: liquidMove 10s ease-in-out infinite alternate;
+}
+
+@keyframes liquidMove {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  33% {
+    background-position: 100% 10%;
+  }
+
+  66% {
+    background-position: 20% 90%;
+  }
+
+  100% {
+    background-position: 80% 50%;
+  }
+}
+
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--bg-surface);
+  padding: 40px;
+  border-radius: var(--radius-20);
+  box-shadow: var(--shadow-main);
+  border: 1px solid var(--border-color);
+  width: 400px;
+}
+
+.auth-container form {
+  display: flex;
+  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.auth-container h1{
+  margin: 0;
+  font-size: 36px;
+}
+
+.auth-container p{
+  margin: 0 0 20px;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.auth-container p:hover{
+  color: var(--brand-primary);
+  transition: var(--transition-standard);
+}

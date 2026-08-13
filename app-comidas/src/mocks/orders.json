@@ -1,0 +1,58 @@
+[
+  {
+    "id": 116,
+    "restaurant": "Quiznos",
+    "status": "DELIVERED",
+    "date": "Wednesday, April 8, 2026",
+    "time": "04:50",
+    "customer": "User",
+    "paymentMethod": "Cash",
+    "items": [
+      {
+        "quantity": 1,
+        "name": "Large Pizza",
+        "price": 5000
+      }
+    ],
+    "total": 7000
+  },
+  {
+    "id": 117,
+    "restaurant": "Quiznos",
+    "status": "PENDING",
+    "date": "Sunday, May 3, 2026",
+    "time": "12:30",
+    "customer": "Elena Vargas",
+    "paymentMethod": "Card",
+    "items": [
+      {
+        "quantity": 2,
+        "name": "Sub Supreme",
+        "price": 3500
+      },
+      {
+        "quantity": 1,
+        "name": "Soft Drink",
+        "price": 1200
+      }
+    ],
+    "total": 8200
+  },
+  {
+    "id": 118,
+    "restaurant": "Quiznos",
+    "status": "CANCELLED",
+    "date": "Sunday, May 3, 2026",
+    "time": "13:15",
+    "customer": "Carlos Mendoza",
+    "paymentMethod": "Cash",
+    "items": [
+      {
+        "quantity": 1,
+        "name": "Chicken Carbonara",
+        "price": 4200
+      }
+    ],
+    "total": 4200
+  }
+]

@@ -1,0 +1,89 @@
+.hero-section{
+  height: 60vh;
+  border-radius: var(--radius-large);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('../../assets/imagen-fondo-modo-oscuro.jpg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.hero-body h1{
+  margin: 0;
+  font-size: 48px;
+  font-weight: 900;
+}
+
+.hero-body{
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.section{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  margin-top: 20px;
+  background-color: var(--bg-surface);
+}
+
+.body{
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  height: auto;
+}
+
+.body h2{
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.header-restaurants{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.header-restaurants a{
+  color: var(--brand-primary);
+}
+
+.header-restaurants a:hover{
+  color: var(--text-main);
+  transform: translateY(-8px);
+  transition: var(--transition-standard);
+}
+
+.pasos{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  height: 100%;
+}
+
+.paso{
+  width: 250px;
+  height: 230px;
+  text-align: center;
+}
+
+.paso i{
+  font-size: 48px;
+  color: var(--brand-primary);
+}
+
+.paso p{
+  font-weight: 400;
+  color: #888;
+}
+

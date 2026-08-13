@@ -1,0 +1,144 @@
+.cart-section{
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-surface);
+  width: 80%;
+  height: auto;
+  flex-direction: column;
+  border-radius: var(--radius-secondary);
+  border: 1px solid var(--border-color);
+  margin: 40px 0 60px 0;
+  padding: 40px 0;
+  box-shadow: var(--shadow-main);
+}
+
+.cart-header{
+  display: flex;
+  width: 90%;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 20px;
+}
+
+.cart-header h1{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-weight: 900;
+  margin: 0;
+}
+
+.cart-header h1 i{
+  color: var(--brand-primary);
+  font-size: 32px;
+}
+
+.cart-header a{
+  height: 15px;
+  display: flex;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--brand-primary);
+  font-weight: 900;
+}
+
+.cart-header a i{
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.cart-header a:hover, .cart-header a:hover i{
+  color: var(--brand-soft);
+}
+
+.cart-body{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90%;
+  margin-top: 40px;
+}
+
+.cart-items{
+  display: flex;
+  width: 60%;
+  height: max-content;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-secondary);
+  color: #888;
+  font-weight: 400;
+  padding: 180px 20px;
+  box-shadow: var(--shadow-main);
+}
+
+.cart-details{
+  padding: 24px;
+  background-color: var(--bg-alternative);
+  border-radius: var(--radius-secondary);
+  border: 2px solid var(--border-color);
+  width: 30%;
+  height: auto;
+  box-shadow: var(--shadow-main);
+}
+
+.cart-detail span{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.cart-detail span i{
+  font-size: 12px;
+  color: var(--brand-primary);
+}
+
+.form{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.link-add, .link-add a{
+  display: flex;
+  margin-left: auto;
+  font-size: 14px;
+  gap: 5px;
+  align-items: center;
+  color: var(--brand-primary);
+}
+
+.link-add a i{
+  color: var(--brand-primary);
+  font-size: 12px;
+}
+
+.link-add a:hover, .link-add a:hover i{
+  color: var(--brand-soft);
+}
+
+.container{
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  gap: 10px;
+}
+
+.container-row{
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+
+.container-row span{
+  font-weight: 400;
+  font-size: 14px;
+}
+
+h2{
+  margin: 0 0 20px 0;
+}

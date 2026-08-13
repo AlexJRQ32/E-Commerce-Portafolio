@@ -1,0 +1,29 @@
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+}
+
+.custom-input {
+  width: 100%;
+  padding: 12px 12px 12px 45px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-main);
+  background-color: var(--bg-surface-elevated);
+  box-sizing: border-box;
+  color: var(--text-primary);
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--brand-primary);
+  pointer-events: none;
+}
+
+.form-modal button {
+  margin-top: 20px;
+}

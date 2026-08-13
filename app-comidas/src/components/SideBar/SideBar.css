@@ -1,0 +1,86 @@
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  align-self: start;
+  height: 90vh;
+  width: 300px;
+  align-items: center;
+  padding: 40px 0;
+  background-color: var(--bg-main);
+  box-shadow: var(--shadow-main);
+}
+
+.sidebar-header{
+  text-align: center;
+}
+
+.sidebar-header h1{
+  margin: 0;
+  font-weight: 400;
+  color: var(--brand-primary);
+}
+
+.sidebar-header p{
+  margin: 0;
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.sidebar {
+  display: flex;
+  height: 100%;
+  width: 80%;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar ul {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  width: 100%;
+  align-items: start;
+  gap: 20px;
+  justify-content: center;
+}
+
+.sidebar ul li {
+  list-style: none;
+  width: 100%;
+}
+
+.sidebar ul li a {
+  align-self: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px 20px;
+  border-radius: var(--radius-main);
+}
+
+.sidebar ul li a:hover {
+  background-color: var(--nav-hover);
+  transition: var(--transition-standard);
+}
+
+.sidebar ul li .active{
+  background-color: var(--nav-hover);
+  color: var(--brand-primary);
+}
+
+.exit-section{
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  gap: 10px;
+  background-color: var(--bg-section-alt);
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-main);
+  box-shadow: var(--shadow-main);
+}
+
+.exit-section p{
+  margin: 0;
+  font-weight: 400;
+}

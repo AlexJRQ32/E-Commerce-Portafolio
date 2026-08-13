@@ -1,0 +1,53 @@
+.dashboard-layout{
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.dashboard-content{
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: var(--bg-surface);
+}
+
+.content-header{
+  display: flex;
+  width: 90%;
+  justify-self: center;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 2px solid var(--border-color);
+  padding: 0 0 10px;
+}
+
+.content-header h1{
+  font-weight: bolder;
+  font-size: 40px;
+}
+
+.content-header p{
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.content-header h1, .content-header p{
+  margin: 0;
+}
+
+.content-main{
+  width: 90%;
+  justify-self: center;
+  padding: 20px 0 0 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+}

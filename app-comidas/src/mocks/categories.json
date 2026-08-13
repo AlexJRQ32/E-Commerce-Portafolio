@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Burgers",
+    "icon": "hamburger",
+    "slug": "burgers"
+  },
+  {
+    "id": 2,
+    "name": "Pizza",
+    "icon": "pizza-slice",
+    "slug": "pizza"
+  },
+  {
+    "id": 3,
+    "name": "Chicken",
+    "icon": "drumstick-bite",
+    "slug": "chicken"
+  },
+  {
+    "id": 4,
+    "name": "Desserts",
+    "icon": "ice-cream",
+    "slug": "desserts"
+  },
+  {
+    "id": 5,
+    "name": "More",
+    "icon": "utensils",
+    "slug": "more"
+  }
+]
