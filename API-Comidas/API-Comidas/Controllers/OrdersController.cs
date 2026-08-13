@@ -278,9 +278,10 @@ namespace API_Comidas.Controllers
                 if (string.IsNullOrWhiteSpace(order.PaymentMethodId))
                     return BadRequest(new { message = "PaymentMethodId is required" });
 
-                var addressExists = await _context.Addresses.AnyAsync(a => a.Id == order.AddressId);
+                // N2 (FIX): Validate address ownership — address must belong to the authenticated user
+                var addressExists = await _context.Addresses.AnyAsync(a => a.Id == order.AddressId && a.UserId == claimUserId);
                 if (!addressExists)
-                    return BadRequest(new { message = $"Address with ID '{order.AddressId}' does not exist" });
+                    return BadRequest(new { message = "Address does not belong to the authenticated user" });
 
                 var paymentMethodExists = await _context.PaymentMethods.AnyAsync(p => p.Id == order.PaymentMethodId);
                 if (!paymentMethodExists)
@@ -309,18 +310,32 @@ namespace API_Comidas.Controllers
 
                 order.Total = order.Items.Sum(i => i.Price * i.Quantity);
 
-                // Optional: apply coupon discount if CouponCodeApplied is set
+                // N1 (FIX): Full coupon validation — existence, active, stock, expiration, restaurant ownership, and stock decrement
                 if (!string.IsNullOrEmpty(order.CouponCodeApplied))
                 {
-                    var coupon = await _context.Coupons
-                        .FirstOrDefaultAsync(c => c.Code == order.CouponCodeApplied && c.Active && c.Stock > 0);
-                    if (coupon != null)
-                    {
-                        var discount = coupon.IsPercentage
-                            ? order.Total * (coupon.Discount / 100m)
-                            : coupon.Discount;
-                        order.Total = Math.Max(0, order.Total - discount);
-                    }
+                    var coupon = await _context.Coupons.FirstOrDefaultAsync(c => c.Code == order.CouponCodeApplied);
+                    if (coupon == null)
+                        return BadRequest(new { message = $"Coupon '{order.CouponCodeApplied}' not found" });
+                    if (!coupon.Active)
+                        return BadRequest(new { message = "Coupon is not active" });
+                    if (!coupon.Stock.HasValue || coupon.Stock <= 0)
+                        return BadRequest(new { message = "Coupon has no stock" });
+                    // ExpirationDate is string in ISO format "yyyy-MM-dd"
+                    if (coupon.ExpirationDate.CompareTo(DateTime.Today.ToString("yyyy-MM-dd")) < 0)
+                        return BadRequest(new { message = "Coupon expired" });
+                    // Validate restaurant ownership: if coupon has a RestaurantId, it must match the order's restaurant
+                    if (coupon.RestaurantId.HasValue && coupon.RestaurantId != order.RestaurantId)
+                        return BadRequest(new { message = "Coupon does not belong to this restaurant" });
+
+                    // Apply discount
+                    var discount = coupon.IsPercentage
+                        ? order.Total * (coupon.Discount / 100m)
+                        : coupon.Discount;
+                    order.Total = Math.Max(0, order.Total - discount);
+
+                    // Decrement coupon stock (same SaveChangesAsync as the order)
+                    coupon.Stock = coupon.Stock - 1;
+                    _context.Coupons.Update(coupon);
                 }
 
                 if (order.Total <= 0)
@@ -351,17 +366,27 @@ namespace API_Comidas.Controllers
             {
                 if (id <= 0) return BadRequest(new { message = "Invalid ID" });
 
-                var existingOrder = await _context.Orders.FindAsync(id);
+                var existingOrder = await _context.Orders
+                    .Include(o => o.RestaurantRef)
+                    .FirstOrDefaultAsync(o => o.Id == id);
                 if (existingOrder == null)
                     return NotFound(new { message = $"Order with ID {id} not found" });
 
                 if (order == null)
                     return BadRequest(new { message = "Order data cannot be null" });
 
-                // IDOR: verify ownership or Admin
+                // N5 (FIX): Ownership — customer, Admin, OR restaurant owner (business)
                 var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
-                if (roleClaim != "Admin" && userIdClaim != existingOrder.CustomerId.ToString())
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized("Usuario no autenticado.");
+
+                var claimUserId = int.Parse(userIdClaim);
+                bool isCustomer = claimUserId == existingOrder.CustomerId;
+                bool isAdmin = roleClaim == "Admin";
+                bool isBusinessOwner = existingOrder.RestaurantRef?.UserId == claimUserId;
+
+                if (!isCustomer && !isAdmin && !isBusinessOwner)
                     return Forbid();
 
                 // Only Status is editable via update. Total is immutable after creation.
@@ -369,6 +394,15 @@ namespace API_Comidas.Controllers
                 var validStatuses = new[] { "Pendiente", "En proceso", "Entregado", "Cancelado" };
                 if (!string.IsNullOrEmpty(order.Status) && !validStatuses.Contains(order.Status))
                     return BadRequest(new { message = $"Invalid status. Valid values: {string.Join(", ", validStatuses)}" });
+
+                // N5 (FIX): Business owners can only set kitchen states (not "Pendiente" which is the initial customer state)
+                // Customers and Admins can set any valid status
+                if (isBusinessOwner && !isAdmin)
+                {
+                    var businessAllowedStatuses = new[] { "En proceso", "Entregado", "Cancelado" };
+                    if (!string.IsNullOrEmpty(order.Status) && !businessAllowedStatuses.Contains(order.Status))
+                        return BadRequest(new { message = $"Business owners can only set status to: {string.Join(", ", businessAllowedStatuses)}" });
+                }
 
                 if (!string.IsNullOrEmpty(order.Status))
                     existingOrder.Status = order.Status;

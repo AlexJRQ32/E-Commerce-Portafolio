@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -108,6 +109,14 @@ else
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+
+// N4 (FIX): Forwarded headers for Render proxy — ensures RemoteIpAddress is the real client IP
+// for rate limiting and HSTS. In localhost (no proxy) this is a no-op.
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 app.UseRateLimiter();
 
 // Security headers middleware
