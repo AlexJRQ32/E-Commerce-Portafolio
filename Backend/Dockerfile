@@ -3,14 +3,15 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Copiar el archivo de proyecto .csproj y restaurar dependencias
-COPY ["API-Comidas.csproj", "./"]
-RUN dotnet restore "API-Comidas.csproj"
+COPY ["Backend/Backend/Backend.csproj", "Backend/Backend/"]
+RUN dotnet restore "Backend/Backend/Backend.csproj"
 
 # Copiar todo el resto del código fuente del backend
 COPY . .
+WORKDIR "/src/Backend/Backend"
 
 # Compilar en modo Release hacia el directorio /app/publish
-RUN dotnet publish "API-Comidas.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Backend.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Etapa 2: Entorno de ejecución (Runtime)
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
@@ -22,4 +23,4 @@ EXPOSE 8080
 ENV ASPNETCORE_URLS=http://+:8080
 
 # Comando para arrancar la aplicación
-ENTRYPOINT ["dotnet", "API-Comidas.dll"]
+ENTRYPOINT ["dotnet", "Backend.dll"]
