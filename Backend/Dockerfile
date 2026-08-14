@@ -3,12 +3,12 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Copiar el archivo de proyecto .csproj y restaurar dependencias
-COPY ["Backend/Backend.csproj", "Backend/"]
-RUN dotnet restore "Backend/Backend.csproj"
+COPY ["Backend/Backend/Backend.csproj", "Backend/Backend/"]
+RUN dotnet restore "Backend/Backend/Backend.csproj"
 
 # Copiar todo el resto del código fuente del backend
 COPY . .
-WORKDIR "/src/Backend"
+WORKDIR "/src/Backend/Backend"
 
 # Compilar en modo Release hacia el directorio /app/publish
 RUN dotnet publish "Backend.csproj" -c Release -o /app/publish /p:UseAppHost=false
