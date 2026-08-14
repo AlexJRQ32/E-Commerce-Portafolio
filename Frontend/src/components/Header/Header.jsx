@@ -1,10 +1,10 @@
 import './Header.css'
 import logo from '../../assets/logo-final.png'
 import { NavLink } from 'react-router-dom'
-import { useModal } from '../../hooks/useModal'
+import { useModal } from '../../common/hooks/useModal'
 import { Modal } from '../Modal/Modal'
 import { FormUser } from '../ModalContent/ModalContent'
-import { useMappedObjects } from '../../hooks/useMappedObjects'
+import { useMappedObjects } from '../../common/hooks/useMappedObjects'
 
 export function Header() {
   const { isClose, openModal, isOpen } = useModal()

@@ -1,12 +1,12 @@
-import './Cards.css'
-import { ButtonAction, ButtonRedirect } from '../Button/Button'
-import { NavLink } from 'react-router-dom'
-import { formatCurrency } from '../../utils/format'
+import './Cards.css';
+import { ButtonAction, ButtonRedirect } from '../Button/Button';
+import { NavLink } from 'react-router-dom';
+import { formatCurrency } from '../../common/utils/format';
 
 export function CategoryCard({ categories }) {
   return (
     <ul className="categories">
-      {categories.map(categorie => (
+      {categories.map((categorie) => (
         <li key={categorie.id}>
           <NavLink to="/search" className="categorie-card">
             <i className={`fa-solid fa-${categorie.icon}`}></i>
@@ -14,15 +14,15 @@ export function CategoryCard({ categories }) {
             {categorie.subtitle ?? <p>{categorie.subtitle}</p>}
           </NavLink>
         </li>
-    ))}
+      ))}
     </ul>
-  )
+  );
 }
 
 export function RoleCard({ roles }) {
   return (
     <ul className="roles">
-      {roles.map(role => (
+      {roles.map((role) => (
         <li key={role.id}>
           <NavLink to={role.site} className="role-card">
             <i className={`fa-solid fa-${role.icon} fa-3x`}></i>
@@ -32,15 +32,15 @@ export function RoleCard({ roles }) {
             </div>
           </NavLink>
         </li>
-    ))}
+      ))}
     </ul>
-  )
+  );
 }
 
 export function RestaurantCard({ restaurants }) {
   return (
     <ul className="restaurants">
-      {restaurants.map(restaurant => (
+      {restaurants.map((restaurant) => (
         <li key={restaurant.id}>
           <NavLink to="/search" className="restaurant-card">
             <img src={restaurant.img} alt={restaurant.tradeName} />
@@ -59,13 +59,13 @@ export function RestaurantCard({ restaurants }) {
         </li>
       ))}
     </ul>
-  )
+  );
 }
 
 export function RestaurantLargeCard({ restaurants }) {
   return (
-    <ul className='show-restaurants'>
-      {restaurants.map(restaurant => (
+    <ul className="show-restaurants">
+      {restaurants.map((restaurant) => (
         <li key={restaurant.id}>
           <div className="large-card">
             <img src={restaurant.img} alt={restaurant.tradeName} />
@@ -91,7 +91,8 @@ export function RestaurantLargeCard({ restaurants }) {
                     {restaurant.openingTime} - {restaurant.closingTime}
                   </span>
                   <p>
-                    {restaurant.deliveryFee} delivery • {restaurant.deliveryTime}
+                    {restaurant.deliveryFee} delivery •{' '}
+                    {restaurant.deliveryTime}
                   </p>
                 </div>
                 <ButtonRedirect title={'View menu'} />
@@ -101,24 +102,23 @@ export function RestaurantLargeCard({ restaurants }) {
         </li>
       ))}
     </ul>
-  )
+  );
 }
 
 export function OrderCard({ orders }) {
-  
   const statusClass = ({ status }) => {
     if (status === 'DELIVERED') {
-      return 'completed'
+      return 'completed';
     } else if (status === 'PENDING') {
-      return 'pending'
+      return 'pending';
     } else {
-      return 'cancelled'
+      return 'cancelled';
     }
-  }
+  };
 
   return (
-    <ul className='orders'>
-      {orders.map(order => (
+    <ul className="orders">
+      {orders.map((order) => (
         <li key={order.id}>
           <div className="order-card">
             <div className="card-header">
@@ -142,13 +142,15 @@ export function OrderCard({ orders }) {
                 </p>
               </div>
               <div className="right-side">
-                <span className={statusClass({ status: order.status})}>{order.status}</span>
+                <span className={statusClass({ status: order.status })}>
+                  {order.status}
+                </span>
                 <h3>{formatCurrency(order.total)}</h3>
-               </div>
-             </div>
-             <div className="card-items">
-               <i className="fa-solid fa-circle-dot"></i>
-               {order.items.map((item) => (
+              </div>
+            </div>
+            <div className="card-items">
+              <i className="fa-solid fa-circle-dot"></i>
+              {order.items.map((item) => (
                 <span className="order-item" key={item.name}>
                   {item.quantity}x {item.name} ({formatCurrency(item.price)})
                 </span>
@@ -158,25 +160,25 @@ export function OrderCard({ orders }) {
         </li>
       ))}
     </ul>
-  )
+  );
 }
 
 export function OrderSimpleCard({ orders }) {
   const statusClass = ({ status }) => {
     if (status === 'DELIVERED') {
-      return 'completed'
+      return 'completed';
     } else if (status === 'PENDING') {
-      return 'pending'
+      return 'pending';
     } else {
-      return 'cancelled'
+      return 'cancelled';
     }
-  }
+  };
 
   return (
-    <ul className='orders'>
-      {orders.map(order => (
+    <ul className="orders">
+      {orders.map((order) => (
         <li key={order.id}>
-          <div className="order-card" >
+          <div className="order-card">
             <div className="card-header">
               <div className="left-side">
                 <h2>Order #{order.id}</h2>
@@ -186,52 +188,55 @@ export function OrderSimpleCard({ orders }) {
                 </p>
               </div>
               <div className="right-side">
-                <span className={statusClass({ status: order.status })}>{order.status}</span>
+                <span className={statusClass({ status: order.status })}>
+                  {order.status}
+                </span>
                 <h3>{formatCurrency(order.total)}</h3>
-                <ButtonRedirect
-                  icon={'star'}
-                  title={'Rate'}
-                />
+                <ButtonRedirect icon={'star'} title={'Rate'} />
               </div>
             </div>
           </div>
         </li>
       ))}
     </ul>
-  )
+  );
 }
 
 export function StatCard({ statcards }) {
-  return(
+  return (
     <ul className="stats-cards">
-      {statcards.map(statcard => (
+      {statcards.map((statcard) => (
         <li key={statcard.id}>
-          <NavLink to={statcard.site} className={"stat-card"}>
+          <NavLink to={statcard.site} className={'stat-card'}>
             <div>
               <span>
                 <i className={`fa-solid fa-${statcard.icon}`}></i>
               </span>
-              <p>{statcard.title} {statcard.value}</p>
+              <p>
+                {statcard.title} {statcard.value}
+              </p>
             </div>
           </NavLink>
         </li>
       ))}
     </ul>
-  )
+  );
 }
 
-export function CrudCard({ img, name, attribute, className, icon, onclick}) {
-  return(
+export function CrudCard({ img, name, attribute, className, icon, onclick }) {
+  return (
     <div className={`crud-card ${className}`}>
       <img src={img} alt={name} />
       <span>
         <p>{name}</p>
-        <strong><i className={`fa-solid fa-${icon}`}></i> {attribute}</strong>
+        <strong>
+          <i className={`fa-solid fa-${icon}`}></i> {attribute}
+        </strong>
       </span>
       <div>
         <ButtonAction icon={'pencil'} className={'edit'} onclick={onclick} />
-        <ButtonAction icon={'trash'} className={'delete'}/>
+        <ButtonAction icon={'trash'} className={'delete'} />
       </div>
     </div>
-  )
+  );
 }

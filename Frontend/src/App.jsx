@@ -1,24 +1,24 @@
 import './App.css'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { Home } from './pages/Home/Home'
-import { Search } from './pages/Search/Search'
-import { Cart } from './pages/Cart/Cart'
-import { IncomingOrders } from './pages/Orders/IncomingOrders'
-import { OrderHistory } from './pages/Orders/OrderHistory'
-import { Coupons } from './pages/Coupons/Coupons'
-import { AdminDashboard } from './pages/AdminDashboard/AdminDashboard'
+import { Home } from './feature/home/pages/Home'
+import { Search } from './feature/search/pages/Search'
+import { Cart } from './feature/cart/pages/Cart'
+import { IncomingOrders } from './feature/orders/pages/IncomingOrders'
+import { OrderHistory } from './feature/orders/pages/OrderHistory'
+import { Coupons } from './feature/coupons/pages/Coupons'
+import { AdminDashboard } from './feature/dashboard/pages/AdminDashboard'
 import { UserLayout } from './UserLayout'
-import { OverviewDashboard } from './pages/AdminDashboard/Dashboard Pages/Overview'
-import { MyMenuDashboard } from './pages/AdminDashboard/Dashboard Pages/MyMenu'
-import { RestaurantsDashboard } from './pages/AdminDashboard/Dashboard Pages/Restaurants'
-import { UsersDashboard } from './pages/AdminDashboard/Dashboard Pages/Users'
-import { CouponsDashboard } from './pages/AdminDashboard/Dashboard Pages/CouponsDashboard'
-import { Voucher } from './pages/Voucher/Voucher'
-import { AuthLayout } from './pages/Auth/AuthLayout'
-import { SignIn } from './pages/Auth/SignIn'
-import { SignUp } from './pages/Auth/SignUp'
-import { ChooseRole } from './pages/Auth/ChooseRole'
-import { RegisterBusiness } from './pages/Auth/RegisterBusiness'
+import { OverviewDashboard } from './feature/dashboard/pages/Dashboard Pages/Overview'
+import { MyMenuDashboard } from './feature/dashboard/pages/Dashboard Pages/MyMenu'
+import { RestaurantsDashboard } from './feature/dashboard/pages/Dashboard Pages/Restaurants'
+import { UsersDashboard } from './feature/dashboard/pages/Dashboard Pages/Users'
+import { CouponsDashboard } from './feature/dashboard/pages/Dashboard Pages/CouponsDashboard'
+import { Voucher } from './feature/voucher/pages/Voucher'
+import { AuthLayout } from './feature/auth/pages/AuthLayout'
+import { SignIn } from './feature/auth/pages/SignIn'
+import { SignUp } from './feature/auth/pages/SignUp'
+import { ChooseRole } from './feature/auth/pages/ChooseRole'
+import { RegisterBusiness } from './feature/auth/pages/RegisterBusiness'
 
 function App() {
   return (
@@ -32,7 +32,7 @@ function App() {
           <Route path="/incoming-orders" element={<IncomingOrders />} />
           <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/coupons" element={<Coupons />} />
-          <Route path='/voucher' element={<Voucher />}/>
+          <Route path='/voucher' element={<Voucher />} />
         </Route>
 
         <Route path="/dashboard" element={<AdminDashboard />}>
@@ -47,8 +47,8 @@ function App() {
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="sign-in" element={<SignIn />} />
           <Route path="sign-up" element={<SignUp />} />
-          <Route path='choose-role' element={<ChooseRole />}/>
-          <Route path='register-business' element={<RegisterBusiness />}/>
+          <Route path='choose-role' element={<ChooseRole />} />
+          <Route path='register-business' element={<RegisterBusiness />} />
         </Route>
       </Routes>
     </div>

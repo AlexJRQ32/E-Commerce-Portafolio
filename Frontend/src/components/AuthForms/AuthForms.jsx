@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { ButtonRedirect } from '../Button/Button'
 import './AuthForms.css'
 import { RoleCard } from '../Cards/Cards'
-import { useMappedObjects } from '../../hooks/useMappedObjects'
+import { useMappedObjects } from '../../common/hooks/useMappedObjects'
 import { AuthInput, AuthSelect } from './AuthInput'
 
 export function SignInForm() {

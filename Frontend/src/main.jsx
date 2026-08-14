@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { ModalProvider } from './context/modal.jsx'
+import { ModalProvider } from './common/context/modal.jsx'
 import './index.css'
 import App from './App.jsx'
 

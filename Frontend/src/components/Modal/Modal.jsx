@@ -25,7 +25,10 @@ export function Modal({ isOpen, onClose, children, subtitle, title, form, isCoup
             <div className="modal-main">
               <div className={isCoupon ? 'modal-hidden' : 'modal-main-left'}>
                 <div className={isCoupon ? "modal-hidden" : "circle-image"}>
-                  <img src={children[0].img} alt={children[0].name} />
+                  <img
+                    src={children && children[0]?.img ? children[0].img : ''}
+                    alt={children && children[0]?.name ? children[0].name : 'User'}
+                  />
                   <span className={isCoupon ? "modal-hidden" : "edit"}>
                     <ButtonAction className={isCoupon ? "modal-hidden" : 'edit'} icon={'pencil'} />
                   </span>
