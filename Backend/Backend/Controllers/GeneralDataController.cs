@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.RateLimiting;
 namespace Backend.Controllers
 {
     [Route("api/[controller]")]
+    [Route("api")]  // Alias para rutas directas: /api/categories, /api/payment-methods, /api/roles
     [ApiController]
     [EnableRateLimiting("general")]
     public class GeneralDataController : ControllerBase
