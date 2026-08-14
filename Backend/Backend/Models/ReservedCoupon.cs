@@ -12,6 +12,9 @@ namespace Backend.Models
         public int Id { get; set; }
 
         [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [Required]
         [Column("CouponId")]
         public int CouponId { get; set; }
 

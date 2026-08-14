@@ -7,13 +7,37 @@ namespace Backend.Models
     public class Address
     {
         [Key]
-        [Column("Id")]
-        public string Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime? UpdatedAt { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        [Column("Name")]
+        public string Name { get; set; }
 
         [Required]
         [StringLength(200)]
-        [Column("Name")]
-        public string Name { get; set; }
+        [Column("Street")]
+        public string Street { get; set; }
+
+        [StringLength(100)]
+        [Column("City")]
+        public string City { get; set; }
+
+        [StringLength(20)]
+        [Column("PostalCode")]
+        public string PostalCode { get; set; }
+
+        [Column("Latitude")]
+        public double? Latitude { get; set; }
+
+        [Column("Longitude")]
+        public double? Longitude { get; set; }
 
         [Required]
         [Column("UserId")]

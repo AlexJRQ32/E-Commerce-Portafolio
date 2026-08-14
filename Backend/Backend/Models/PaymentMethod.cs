@@ -8,8 +8,8 @@ namespace Backend.Models
     public class PaymentMethod
     {
         [Key]
-        [Column("Id")]
-        public string Id { get; set; } = string.Empty;
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
         [Required]
         [StringLength(100)]

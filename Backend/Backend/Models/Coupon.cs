@@ -11,6 +11,11 @@ namespace Backend.Models
         public int Id { get; set; }
 
         [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime? UpdatedAt { get; set; }
+
+        [Required]
         [StringLength(50)]
         [Column("Code")]
         public string Code { get; set; }
@@ -34,9 +39,8 @@ namespace Backend.Models
         public bool IsPercentage { get; set; }
 
         [Required]
-        [StringLength(10)]
         [Column("ExpirationDate")]
-        public string ExpirationDate { get; set; }
+        public DateOnly ExpirationDate { get; set; }
 
         [Required]
         [Column("Active")]
@@ -45,6 +49,17 @@ namespace Backend.Models
         [Range(0, 100000)]
         [Column("Stock")]
         public int? Stock { get; set; }
+
+        [Range(0, int.MaxValue)]
+        [Column("UsageCount")]
+        public int UsageCount { get; set; } = 0;
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal? MinOrderAmount { get; set; }
+
+        [Range(0, int.MaxValue)]
+        [Column("MaxUsesPerUser")]
+        public int? MaxUsesPerUser { get; set; }
 
         [Column("RestaurantId")]
         public int? RestaurantId { get; set; }

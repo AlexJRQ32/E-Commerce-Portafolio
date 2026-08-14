@@ -23,5 +23,13 @@ namespace Backend.Models
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "RestaurantId must be valid")]
         public int RestaurantId { get; set; }
+
+        public bool IsAvailable { get; set; } = true;
+
+        public bool IsVegetarian { get; set; }
+
+        public bool IsVegan { get; set; }
+
+        public int PreparationTimeMinutes { get; set; }
     }
 }

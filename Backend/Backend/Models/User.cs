@@ -12,6 +12,11 @@ namespace Backend.Models
         public int Id { get; set; }
 
         [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime? UpdatedAt { get; set; }
+
+        [Required]
         [StringLength(100)]
         [Column("Name")]
         public string Name { get; set; } = string.Empty;
@@ -38,6 +43,12 @@ namespace Backend.Models
 
         [ForeignKey("RoleId")]
         public virtual Role? Role { get; set; }
+
+        public DateTime? LastLoginAt { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
+        public DateTime? EmailVerifiedAt { get; set; }
 
         [InverseProperty("User")]
         public virtual ICollection<Address>? Addresses { get; set; } = new List<Address>();

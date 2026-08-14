@@ -137,6 +137,11 @@ namespace Backend.Controllers
                     {
                         a.Id,
                         a.Name,
+                        a.Street,
+                        a.City,
+                        a.PostalCode,
+                        a.Latitude,
+                        a.Longitude,
                         a.UserId
                     })
                     .ToListAsync();
@@ -165,13 +170,17 @@ namespace Backend.Controllers
                 return BadRequest(new { message = "Address name is required" });
 
             // Sanitize Name: letters, numbers, spaces, accents, n-tilde, hyphens, periods, commas
-            if (!Regex.IsMatch(dto.Name, @"^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\-\.\,]+$"))
+            if (!Regex.IsMatch(dto.Name, @"^[a-zA-Z0-9áéíóúÁÉÍÓÚñ��üÜ\s\-\.\,]+$"))
                 return BadRequest(new { message = "Address name can only contain letters, numbers, spaces, accents, hyphens, periods, and commas" });
 
             var address = new Address
             {
-                Id = Guid.NewGuid().ToString("N"),
                 Name = dto.Name,
+                Street = dto.Street ?? string.Empty,
+                City = dto.City ?? string.Empty,
+                PostalCode = dto.PostalCode ?? string.Empty,
+                Latitude = dto.Latitude,
+                Longitude = dto.Longitude,
                 UserId = userId
             };
 
@@ -182,6 +191,11 @@ namespace Backend.Controllers
             {
                 address.Id,
                 address.Name,
+                address.Street,
+                address.City,
+                address.PostalCode,
+                address.Latitude,
+                address.Longitude,
                 address.UserId
             });
         }

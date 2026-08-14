@@ -11,24 +11,26 @@ namespace Backend.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [StringLength(150)]
-        [Column("Restaurant")]
-        public string Restaurant { get; set; } = string.Empty;
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [StringLength(20)]
-        [Column("Status")]
-        public string Status { get; set; } = "Pending";
+        public DateTime? UpdatedAt { get; set; }
 
-        [StringLength(10)]
-        [Column("Date")]
-        public string Date { get; set; } = string.Empty;
+        public enum OrderStatus
+        {
+            Pending,
+            Confirmed,
+            Preparing,
+            Ready,
+            OutForDelivery,
+            Delivered,
+            Cancelled
+        }
 
-        [StringLength(10)]
-        [Column("Time")]
-        public string Time { get; set; } = string.Empty;
+        [Required]
+        public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
         [StringLength(50)]
-        [Column("CouponCodeApplied")]
         public string? CouponCodeApplied { get; set; }
 
         [Column("CustomerId")]
@@ -37,19 +39,26 @@ namespace Backend.Models
         [ForeignKey("CustomerId")]
         public virtual User? Customer { get; set; }
 
-        [StringLength(50)]
         [Column("PaymentMethodId")]
-        public string PaymentMethodId { get; set; } = string.Empty;
+        public int PaymentMethodId { get; set; }
 
         [ForeignKey("PaymentMethodId")]
         public virtual PaymentMethod? PaymentMethod { get; set; }
 
-        [StringLength(100)]
         [Column("AddressId")]
-        public string AddressId { get; set; } = string.Empty;
+        public int AddressId { get; set; }
 
         [ForeignKey("AddressId")]
         public virtual Address? Address { get; set; }
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal Subtotal { get; set; }
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal Tax { get; set; }
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal DeliveryFee { get; set; }
 
         [Column(TypeName = "decimal(10,2)")]
         public decimal Total { get; set; }
@@ -59,6 +68,12 @@ namespace Backend.Models
 
         [ForeignKey("RestaurantId")]
         public virtual Restaurant? RestaurantRef { get; set; }
+
+        [StringLength(500)]
+        public string? Notes { get; set; }
+
+        [StringLength(200)]
+        public string? CancellationReason { get; set; }
 
         [InverseProperty("Order")]
         public List<OrderItem>? Items { get; set; } = new List<OrderItem>();

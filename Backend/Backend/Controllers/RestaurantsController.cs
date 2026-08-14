@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace Backend.Controllers
@@ -85,7 +84,10 @@ namespace Backend.Controllers
                         r.Rating,
                         r.IsOpen,
                         r.DeliveryFee,
-                        r.DeliveryTime
+                        r.DeliveryTime,
+                        r.Latitude,
+                        r.Longitude,
+                        r.MinOrderAmount
                     })
                     .ToListAsync();
 
@@ -136,6 +138,9 @@ namespace Backend.Controllers
                         r.IsOpen,
                         r.DeliveryFee,
                         r.DeliveryTime,
+                        r.Latitude,
+                        r.Longitude,
+                        r.MinOrderAmount,
                         Dishes = r.Dishes.Select(d => new { d.Id, d.Name, d.Price, d.Description, d.Img }).ToList(),
                         Coupons = r.Coupons.Select(c => new { c.Id, c.Code, c.Title, c.Discount, c.IsPercentage, c.Active }).ToList(),
                         User = r.User != null ? new { r.User.Id, r.User.Name, r.User.Img } : null
@@ -184,6 +189,9 @@ namespace Backend.Controllers
                     restaurant.IsOpen,
                     restaurant.DeliveryFee,
                     restaurant.DeliveryTime,
+                    restaurant.Latitude,
+                    restaurant.Longitude,
+                    restaurant.MinOrderAmount,
                     Dishes = restaurant.Dishes.Select(d => new { d.Id, d.Name, d.Price, d.Description, d.Img }).ToList(),
                     Coupons = restaurant.Coupons.Select(c => new { c.Id, c.Code, c.Title, c.Discount, c.IsPercentage, c.Active }).ToList(),
                     User = restaurant.User != null ? new { restaurant.User.Id, restaurant.User.Name, restaurant.User.Img } : null
@@ -199,7 +207,7 @@ namespace Backend.Controllers
         }
 
         [Authorize(Roles = "Business,Admin")]
-        [HttpPost("create")]
+        [HttpPost("")]
         public async Task<ActionResult<Restaurant>> Create([FromBody] CreateRestaurantDto dto)
         {
             try
@@ -236,13 +244,16 @@ namespace Backend.Controllers
                     CategoryId = dto.CategoryId,
                     UserId = dto.UserId,
                     Address = dto.Address ?? string.Empty,
-                    OpeningTime = dto.OpeningTime ?? "08:00",
-                    ClosingTime = dto.ClosingTime ?? "22:00",
+                    OpeningTime = dto.OpeningTime,
+                    ClosingTime = dto.ClosingTime,
                     Img = string.Empty,
-                    Rating = "5.0",
+                    Rating = 5.0m,
                     IsOpen = true,
-                    DeliveryFee = 0m,
-                    DeliveryTime = "30-45 min"
+                    DeliveryFee = dto.DeliveryFee,
+                    DeliveryTime = dto.DeliveryTime,
+                    Latitude = dto.Latitude,
+                    Longitude = dto.Longitude,
+                    MinOrderAmount = dto.MinOrderAmount
                 };
 
                 _context.Restaurants.Add(restaurant);
@@ -264,7 +275,7 @@ namespace Backend.Controllers
         }
 
         [Authorize(Roles = "Business,Admin")]
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateRestaurantDto dto)
         {
             try
@@ -297,14 +308,32 @@ namespace Backend.Controllers
                     restaurant.CategoryId = dto.CategoryId;
                 }
 
-                if (!string.IsNullOrWhiteSpace(dto.OpeningTime))
-                    restaurant.OpeningTime = dto.OpeningTime;
+                if (dto.OpeningTime.HasValue)
+                    restaurant.OpeningTime = dto.OpeningTime.Value;
 
-                if (!string.IsNullOrWhiteSpace(dto.ClosingTime))
-                    restaurant.ClosingTime = dto.ClosingTime;
+                if (dto.ClosingTime.HasValue)
+                    restaurant.ClosingTime = dto.ClosingTime.Value;
 
                 if (!string.IsNullOrWhiteSpace(dto.Img))
                     restaurant.Img = dto.Img;
+
+                if (dto.IsOpen.HasValue)
+                    restaurant.IsOpen = dto.IsOpen.Value;
+
+                if (dto.Latitude.HasValue)
+                    restaurant.Latitude = dto.Latitude.Value;
+
+                if (dto.Longitude.HasValue)
+                    restaurant.Longitude = dto.Longitude.Value;
+
+                if (dto.DeliveryFee.HasValue)
+                    restaurant.DeliveryFee = dto.DeliveryFee.Value;
+
+                if (!string.IsNullOrWhiteSpace(dto.DeliveryTime))
+                    restaurant.DeliveryTime = dto.DeliveryTime;
+
+                if (dto.MinOrderAmount.HasValue)
+                    restaurant.MinOrderAmount = dto.MinOrderAmount.Value;
 
                 if (dto.IsOpen.HasValue)
                     restaurant.IsOpen = dto.IsOpen.Value;
@@ -327,7 +356,7 @@ namespace Backend.Controllers
         }
 
         [Authorize(Roles = "Business,Admin")]
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

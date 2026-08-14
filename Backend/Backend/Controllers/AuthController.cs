@@ -185,13 +185,16 @@ namespace Backend.Controllers
                 CategoryId = dto.CategoryId,
                 UserId = userId,
                 Address = dto.Address ?? string.Empty,
-                OpeningTime = dto.OpeningTime ?? "08:00",
-                ClosingTime = dto.ClosingTime ?? "22:00",
+                OpeningTime = dto.OpeningTime,
+                ClosingTime = dto.ClosingTime,
                 Img = string.Empty,
-                Rating = "5.0",
+                Rating = 5.0m,
                 IsOpen = true,
-                DeliveryFee = 0m,
-                DeliveryTime = "30-45 min"
+                DeliveryFee = dto.DeliveryFee,
+                DeliveryTime = dto.DeliveryTime,
+                Latitude = dto.Latitude,
+                Longitude = dto.Longitude,
+                MinOrderAmount = dto.MinOrderAmount
             };
 
             _context.Restaurants.Add(restaurant);

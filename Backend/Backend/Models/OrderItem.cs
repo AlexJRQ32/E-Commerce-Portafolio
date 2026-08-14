@@ -34,5 +34,8 @@ namespace Backend.Models
 
         [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal Total { get; set; }
     }
 }

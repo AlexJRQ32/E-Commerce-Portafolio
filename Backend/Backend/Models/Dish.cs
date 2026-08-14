@@ -11,6 +11,11 @@ namespace Backend.Models
         public int Id { get; set; }
 
         [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime? UpdatedAt { get; set; }
+
+        [Required]
         [StringLength(150)]
         [Column("Name")]
         public string Name { get; set; }
@@ -33,5 +38,13 @@ namespace Backend.Models
 
         [ForeignKey("RestaurantId")]
         public virtual Restaurant Restaurant { get; set; }
+
+        public bool IsAvailable { get; set; } = true;
+
+        public bool IsVegetarian { get; set; }
+
+        public bool IsVegan { get; set; }
+
+        public int PreparationTimeMinutes { get; set; }
     }
 }

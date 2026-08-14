@@ -12,6 +12,11 @@ namespace Backend.Models
         public int Id { get; set; }
 
         [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime? UpdatedAt { get; set; }
+
+        [Required]
         [StringLength(150)]
         [Column("TradeName")]
         public string TradeName { get; set; }
@@ -36,22 +41,19 @@ namespace Backend.Models
         public virtual User? User { get; set; }
 
         [Required]
-        [StringLength(10)]
         [Column("OpeningTime")]
-        public string OpeningTime { get; set; }
+        public TimeOnly OpeningTime { get; set; }
 
         [Required]
-        [StringLength(10)]
         [Column("ClosingTime")]
-        public string ClosingTime { get; set; }
+        public TimeOnly ClosingTime { get; set; }
 
         [StringLength(500)]
         [Column("Img")]
         public string Img { get; set; }
 
-        [StringLength(5)]
-        [Column("Rating")]
-        public string Rating { get; set; }
+        [Column(TypeName = "decimal(3,2)")]
+        public decimal Rating { get; set; }
 
         [Column("IsOpen")]
         public bool IsOpen { get; set; }
@@ -63,6 +65,13 @@ namespace Backend.Models
         [StringLength(50)]
         [Column("DeliveryTime")]
         public string DeliveryTime { get; set; }
+
+        public double? Latitude { get; set; }
+
+        public double? Longitude { get; set; }
+
+        [Column(TypeName = "decimal(10,2)")]
+        public decimal MinOrderAmount { get; set; }
 
         [InverseProperty("Restaurant")]
         public virtual ICollection<Dish>? Dishes { get; set; } = new List<Dish>();

@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace Backend.Controllers
@@ -39,10 +38,10 @@ namespace Backend.Controllers
         {
             try
             {
-                var today = DateTime.Today.ToString("yyyy-MM-dd");
+                var today = DateOnly.FromDateTime(DateTime.Today);
                 var coupons = await _context.Coupons
                     .Include(c => c.Restaurant)
-                    .Where(c => c.Active && c.Stock > 0 && c.ExpirationDate.CompareTo(today) >= 0)
+                    .Where(c => c.Active && c.Stock > 0 && c.ExpirationDate >= today)
                     .Select(c => new
                     {
                         c.Id,
@@ -170,8 +169,8 @@ namespace Backend.Controllers
                     return BadRequest(new { message = "Coupon is not available (inactive or out of stock)" });
 
                 // Validate coupon hasn't expired
-                var today = DateTime.Today.ToString("yyyy-MM-dd");
-                if (coupon.ExpirationDate.CompareTo(today) < 0)
+                var today = DateOnly.FromDateTime(DateTime.Today);
+                if (coupon.ExpirationDate < today)
                     return BadRequest(new { message = "Coupon expired" });
 
                 // Check if already reserved by this user
@@ -321,7 +320,7 @@ namespace Backend.Controllers
         }
 
         [Authorize(Roles = "Business,Admin")]
-        [HttpPost("create")]
+        [HttpPost("")]
         public async Task<ActionResult<Coupon>> Create([FromBody] Coupon coupon)
         {
             try
@@ -363,7 +362,7 @@ namespace Backend.Controllers
         }
 
         [Authorize(Roles = "Business,Admin")]
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Coupon coupon)
         {
             try
@@ -398,7 +397,8 @@ namespace Backend.Controllers
                 existingCoupon.Description = coupon.Description ?? existingCoupon.Description;
                 existingCoupon.Discount = coupon.Discount > 0 ? coupon.Discount : existingCoupon.Discount;
                 existingCoupon.IsPercentage = coupon.IsPercentage;
-                existingCoupon.ExpirationDate = coupon.ExpirationDate ?? existingCoupon.ExpirationDate;
+                if (coupon.ExpirationDate != default)
+                    existingCoupon.ExpirationDate = coupon.ExpirationDate;
                 existingCoupon.Active = coupon.Active;
                 existingCoupon.Stock = coupon.Stock;
 
@@ -415,7 +415,7 @@ namespace Backend.Controllers
         }
 
         [Authorize(Roles = "Business,Admin")]
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

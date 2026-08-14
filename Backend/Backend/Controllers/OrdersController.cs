@@ -52,10 +52,9 @@ namespace Backend.Controllers
                     .Select(o => new
                     {
                         o.Id,
-                        o.Restaurant,
+                        Restaurant = o.RestaurantRef,
                         o.Status,
-                        o.Date,
-                        o.Time,
+                        o.CreatedAt,
                         o.CouponCodeApplied,
                         o.CustomerId,
                         Customer = o.Customer != null ? new { o.Customer.Id, o.Customer.Name, o.Customer.Email } : null,
@@ -105,10 +104,9 @@ namespace Backend.Controllers
                     .Select(o => new
                     {
                         o.Id,
-                        o.Restaurant,
+                        Restaurant = o.RestaurantRef,
                         o.Status,
-                        o.Date,
-                        o.Time,
+                        o.CreatedAt,
                         o.CouponCodeApplied,
                         o.CustomerId,
                         Customer = o.Customer != null ? new { o.Customer.Id, o.Customer.Name, o.Customer.Email } : null,
@@ -162,10 +160,9 @@ namespace Backend.Controllers
                     .Select(o => new
                     {
                         o.Id,
-                        o.Restaurant,
+                        Restaurant = o.RestaurantRef,
                         o.Status,
-                        o.Date,
-                        o.Time,
+                        o.CreatedAt,
                         o.CouponCodeApplied,
                         o.CustomerId,
                         Customer = o.Customer != null ? new { o.Customer.Id, o.Customer.Name, o.Customer.Email } : null,
@@ -221,10 +218,9 @@ namespace Backend.Controllers
                 var result = new
                 {
                     order.Id,
-                    order.Restaurant,
+                    Restaurant = order.RestaurantRef,
                     order.Status,
-                    order.Date,
-                    order.Time,
+                    order.CreatedAt,
                     order.CouponCodeApplied,
                     order.CustomerId,
                     Customer = order.Customer != null ? new { order.Customer.Id, order.Customer.Name, order.Customer.Email } : null,
@@ -275,11 +271,11 @@ namespace Backend.Controllers
                 if (order.RestaurantId <= 0)
                     return BadRequest(new { message = "RestaurantId must be valid" });
 
-                // Validate FK string references — both are REQUIRED
-                if (string.IsNullOrWhiteSpace(order.AddressId))
+                // Validate FK int references — both are REQUIRED
+                if (order.AddressId <= 0)
                     return BadRequest(new { message = "AddressId is required" });
 
-                if (string.IsNullOrWhiteSpace(order.PaymentMethodId))
+                if (order.PaymentMethodId <= 0)
                     return BadRequest(new { message = "PaymentMethodId is required" });
 
                 // N2 (FIX): Validate address ownership — address must belong to the authenticated user
@@ -312,7 +308,8 @@ namespace Backend.Controllers
                     item.Price = dish.Price; // Use real price from DB, ignore client price
                 }
 
-                order.Total = order.Items.Sum(i => i.Price * i.Quantity);
+                order.Subtotal = order.Items.Sum(i => i.Price * i.Quantity);
+                order.Total = order.Subtotal; // Will add tax/delivery later if needed
 
                 // N1 (FIX): Full coupon validation — existence, active, stock, expiration, restaurant ownership, and stock decrement
                 if (!string.IsNullOrEmpty(order.CouponCodeApplied))
@@ -324,8 +321,8 @@ namespace Backend.Controllers
                         return BadRequest(new { message = "Coupon is not active" });
                     if (!coupon.Stock.HasValue || coupon.Stock <= 0)
                         return BadRequest(new { message = "Coupon has no stock" });
-                    // ExpirationDate is string in ISO format "yyyy-MM-dd"
-                    if (coupon.ExpirationDate.CompareTo(DateTime.Today.ToString("yyyy-MM-dd")) < 0)
+                    // ExpirationDate is DateOnly
+                    if (coupon.ExpirationDate < DateOnly.FromDateTime(DateTime.Today))
                         return BadRequest(new { message = "Coupon expired" });
                     // Validate restaurant ownership: if coupon has a RestaurantId, it must match the order's restaurant
                     if (coupon.RestaurantId.HasValue && coupon.RestaurantId != order.RestaurantId)
@@ -333,9 +330,9 @@ namespace Backend.Controllers
 
                     // Apply discount
                     var discount = coupon.IsPercentage
-                        ? order.Total * (coupon.Discount / 100m)
+                        ? order.Subtotal * (coupon.Discount / 100m)
                         : coupon.Discount;
-                    order.Total = Math.Max(0, order.Total - discount);
+                    order.Total = Math.Max(0, order.Subtotal - discount);
 
                     // Decrement coupon stock (same SaveChangesAsync as the order)
                     coupon.Stock = coupon.Stock - 1;
@@ -345,10 +342,9 @@ namespace Backend.Controllers
                 if (order.Total <= 0)
                     return BadRequest(new { message = "Total must be greater than 0" });
 
-                // N6 (FIX): Force Status, Date, Time — prevent mass assignment from client body
-                order.Status = "Pendiente";
-                order.Date = DateTime.Now.ToString("yyyy-MM-dd");
-                order.Time = DateTime.Now.ToString("HH:mm");
+                // N6 (FIX): Force Status, CreatedAt — prevent mass assignment from client body
+                order.Status = Order.OrderStatus.Pending;
+                order.CreatedAt = DateTime.UtcNow;
 
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
@@ -398,60 +394,62 @@ namespace Backend.Controllers
                 if (!isCustomer && !isAdmin && !isBusinessOwner)
                     return Forbid();
 
+                if (order == null)
+                    return BadRequest(new { message = "Order data cannot be null" });
+
                 // Only Status is editable via update. Total is immutable after creation.
-                if (string.IsNullOrEmpty(order.Status))
+                // order.Status is already an enum (model binder converts string -> enum)
+                if (order.Status == default)
                     return NoContent(); // Nothing to update
 
-                // Validate status values
-                var validStatuses = new[] { "Pendiente", "En proceso", "Entregado", "Cancelado" };
-                if (!validStatuses.Contains(order.Status))
-                    return BadRequest(new { message = $"Invalid status. Valid values: {string.Join(", ", validStatuses)}" });
-
-                // NEW-2 (FIX): State machine — validate status transitions
-                string currentStatus = existingOrder.Status;
-                string newStatus = order.Status;
+                var newStatusEnum = order.Status;
+                var currentStatus = existingOrder.Status;
 
                 // Define allowed transitions: from → [allowed targets]
-                var allowedTransitions = new Dictionary<string, HashSet<string>>
+                var allowedTransitions = new Dictionary<Order.OrderStatus, HashSet<Order.OrderStatus>>
                 {
-                    { "Pendiente", new HashSet<string> { "En proceso", "Cancelado" } },
-                    { "En proceso", new HashSet<string> { "Entregado", "Cancelado" } },
-                    { "Entregado", new HashSet<string> { "Cancelado" } }, // Only Admin can cancel delivered
-                    { "Cancelado", new HashSet<string>() } // Terminal state
+                    { Order.OrderStatus.Pending, new HashSet<Order.OrderStatus> { Order.OrderStatus.Confirmed, Order.OrderStatus.Cancelled } },
+                    { Order.OrderStatus.Confirmed, new HashSet<Order.OrderStatus> { Order.OrderStatus.Preparing, Order.OrderStatus.Cancelled } },
+                    { Order.OrderStatus.Preparing, new HashSet<Order.OrderStatus> { Order.OrderStatus.Ready, Order.OrderStatus.Cancelled } },
+                    { Order.OrderStatus.Ready, new HashSet<Order.OrderStatus> { Order.OrderStatus.OutForDelivery, Order.OrderStatus.Cancelled } },
+                    { Order.OrderStatus.OutForDelivery, new HashSet<Order.OrderStatus> { Order.OrderStatus.Delivered, Order.OrderStatus.Cancelled } },
+                    { Order.OrderStatus.Delivered, new HashSet<Order.OrderStatus> { Order.OrderStatus.Cancelled } }, // Only Admin can cancel delivered
+                    { Order.OrderStatus.Cancelled, new HashSet<Order.OrderStatus>() } // Terminal state
                 };
 
-                if (!allowedTransitions.TryGetValue(currentStatus, out var allowed) || !allowed.Contains(newStatus))
+                if (!allowedTransitions.TryGetValue(currentStatus, out var allowed) || !allowed.Contains(newStatusEnum))
                 {
-                    return BadRequest(new { message = $"Invalid status transition from {currentStatus} to {newStatus}" });
+                    return BadRequest(new { message = $"Invalid status transition from {currentStatus} to {newStatusEnum}" });
                 }
 
                 // Role-specific restrictions on top of the state machine:
-                // Customer: can only cancel (to "Cancelado") from Pendiente or En proceso — NOT from Entregado
+                // Customer: can only cancel (to "Cancelled") from Pending or Confirmed — NOT from Delivered
                 if (isCustomer && !isAdmin)
                 {
-                    if (newStatus != "Cancelado")
+                    if (newStatusEnum != Order.OrderStatus.Cancelled)
                         return BadRequest(new { message = "Customers can only cancel their orders" });
-                    if (currentStatus == "Entregado")
+                    if (currentStatus == Order.OrderStatus.Delivered)
                         return BadRequest(new { message = "Only administrators can cancel a delivered order" });
-                    if (currentStatus == "Cancelado")
+                    if (currentStatus == Order.OrderStatus.Cancelled)
                         return BadRequest(new { message = "Order is already cancelled" });
                 }
 
-                // Business owner: cannot cancel from "Entregado" (only Admin can rectify)
+                // Business owner: cannot cancel from "Delivered" (only Admin can rectify)
                 if (isBusinessOwner && !isAdmin)
                 {
-                    if (currentStatus == "Entregado" && newStatus == "Cancelado")
+                    if (currentStatus == Order.OrderStatus.Delivered && newStatusEnum == Order.OrderStatus.Cancelled)
                         return BadRequest(new { message = "Only administrators can cancel a delivered order" });
-                    // Business cannot cancel from Pendiente — they can only process
-                    if (currentStatus == "Pendiente" && newStatus == "Cancelado")
-                        return BadRequest(new { message = "Business owners cannot cancel pending orders" });
+                    // Business cannot cancel from Pending/Confirmed — they can only process
+                    if ((currentStatus == Order.OrderStatus.Pending || currentStatus == Order.OrderStatus.Confirmed) && newStatusEnum == Order.OrderStatus.Cancelled)
+                        return BadRequest(new { message = "Business owners cannot cancel pending/confirmed orders" });
                 }
 
-                existingOrder.Status = newStatus;
+                existingOrder.Status = newStatusEnum;
+                existingOrder.UpdatedAt = DateTime.UtcNow;
 
-                // Total, Date, Time, CouponCodeApplied are NOT editable after creation
+                // Total, CreatedAt, CouponCodeApplied are NOT editable after creation
                 await _context.SaveChangesAsync();
-                _logger.LogInformation($"Order updated: {id}, status: {newStatus}");
+                _logger.LogInformation($"Order updated: {id}, status: {newStatusEnum}");
                 return NoContent();
             }
             catch (DbUpdateConcurrencyException ex)
