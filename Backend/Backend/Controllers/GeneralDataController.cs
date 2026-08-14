@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.RateLimiting;
 namespace Backend.Controllers
 {
     [Route("api/[controller]")]
-    [Route("api")]  // Alias para rutas directas: /api/categories, /api/payment-methods, /api/roles
     [ApiController]
     [EnableRateLimiting("general")]
     public class GeneralDataController : ControllerBase
@@ -21,27 +20,22 @@ namespace Backend.Controllers
             _context = context;
         }
 
-        // Routes: categories, payment-methods, roles
-        // ASP.NET routing is case-insensitive, so /api/GeneralData/Categories also matches "categories"
-        // The frontend uses lowercase kebab-case: /api/generaldata/payment-methods
-        // Alias directos: /api/categories, /api/payment-methods, /api/roles
+        // Rutas directas: /api/categories, /api/payment-methods, /api/roles
+        // (El frontend usa estas rutas directas)
 
         [HttpGet("categories")]
-        [HttpGet("GeneralData/categories")]
         public async Task<ActionResult<List<Category>>> GetCategories()
         {
             return await _context.Categories.ToListAsync();
         }
 
         [HttpGet("payment-methods")]
-        [HttpGet("GeneralData/payment-methods")]
         public async Task<ActionResult<List<PaymentMethod>>> GetPaymentMethods()
         {
             return await _context.PaymentMethods.ToListAsync();
         }
 
         [HttpGet("roles")]
-        [HttpGet("GeneralData/roles")]
         public async Task<ActionResult<List<Role>>> GetRoles()
         {
             var roles = await _context.Roles.Where(r => r.Id == 2 || r.Id == 3).ToListAsync();

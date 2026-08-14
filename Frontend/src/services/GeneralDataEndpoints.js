@@ -1,10 +1,9 @@
 import { API_BASE_URL } from './apiConfig'
 import { authHeaders } from './authHelper'
 
-const GENERAL_DATA_API = `${API_BASE_URL}/generaldata`
-const GET_CATEGORIES_ENDPOINT = `${GENERAL_DATA_API}/categories`
-const GET_PAYMENT_METHODS_ENDPOINT = `${GENERAL_DATA_API}/payment-methods`
-const GET_ROLES_ENDPOINT = `${GENERAL_DATA_API}/roles`
+const GET_CATEGORIES_ENDPOINT = `${API_BASE_URL}/categories`
+const GET_PAYMENT_METHODS_ENDPOINT = `${API_BASE_URL}/payment-methods`
+const GET_ROLES_ENDPOINT = `${API_BASE_URL}/roles`
 
 export async function GetCategories() {
   try {
