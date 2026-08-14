@@ -3,12 +3,11 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Copiar el archivo de proyecto .csproj y restaurar dependencias
-COPY ["API-Comidas/API-Comidas.csproj", "API-Comidas/"]
-RUN dotnet restore "API-Comidas/API-Comidas.csproj"
+COPY ["API-Comidas.csproj", "./"]
+RUN dotnet restore "API-Comidas.csproj"
 
 # Copiar todo el resto del código fuente del backend
 COPY . .
-WORKDIR "/src/API-Comidas"
 
 # Compilar en modo Release hacia el directorio /app/publish
 RUN dotnet publish "API-Comidas.csproj" -c Release -o /app/publish /p:UseAppHost=false
