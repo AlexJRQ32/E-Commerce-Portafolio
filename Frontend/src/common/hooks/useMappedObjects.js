@@ -66,25 +66,27 @@ export function useMappedObjects() {
         paymentMethods: paymentMethods.status === 'fulfilled' && paymentMethods.value
           ? paymentMethods.value.map((method) => ({
               id: method.id,
-              icon: method.icono,
               name: method.name,
-              type: method.tipo,
-              description: method.descripcion,
+              type: method.type,
+              description: method.description,
             }))
           : [],
         restaurants: restaurants.status === 'fulfilled' && restaurants.value
           ? restaurants.value.map((restaurant) => ({
-              id: restaurant.Id,
-              tradeName: restaurant.TradeName,
-              address: restaurant.Address,
-              categoryId: restaurant.CategoryId,
-              openingTime: restaurant.OpeningTime,
-              closingTime: restaurant.ClosingTime,
-              img: restaurant.Img,
-              rating: restaurant.Rating,
-              isOpen: restaurant.IsOpen,
-              deliveryFee: formatCurrency(restaurant.DeliveryFee),
-              deliveryTime: restaurant.DeliveryTime,
+              id: restaurant.id,
+              tradeName: restaurant.tradeName,
+              address: restaurant.address,
+              categoryId: restaurant.categoryId,
+              openingTime: restaurant.openingTime,
+              closingTime: restaurant.closingTime,
+              img: restaurant.img,
+              rating: restaurant.rating,
+              isOpen: restaurant.isOpen,
+              deliveryFee: formatCurrency(restaurant.deliveryFee),
+              deliveryTime: restaurant.deliveryTime,
+              latitude: restaurant.latitude,
+              longitude: restaurant.longitude,
+              minOrderAmount: restaurant.minOrderAmount,
             }))
           : [],
         roles: roles.status === 'fulfilled' && roles.value
@@ -116,11 +118,16 @@ export function useMappedObjects() {
         users: users.status === 'fulfilled' && users.value
           ? users.value.map((user) => ({
               id: user.id,
-              email: user.email,
+              createdAt: user.createdAt,
+              updatedAt: user.updatedAt,
               name: user.name,
-              role: user.role,
-              img: user.img,
+              email: user.email,
               phone: user.phone,
+              img: user.img,
+              roleId: user.roleId,
+              lastLoginAt: user.lastLoginAt,
+              isActive: user.isActive,
+              emailVerifiedAt: user.emailVerifiedAt,
             }))
           : [],
         coupons: coupons.status === 'fulfilled' && coupons.value
@@ -140,14 +147,20 @@ export function useMappedObjects() {
         orders: orders.status === 'fulfilled' && orders.value
           ? orders.value.map((order) => ({
               id: order.id,
-              restaurant: order.restaurant,
+              createdAt: order.createdAt,
+              updatedAt: order.updatedAt,
               status: order.status,
-              date: order.date,
-              time: order.time,
-              customer: order.customer,
-              paymentMethod: order.paymentMethod,
-              items: order.items,
+              customerId: order.customerId,
+              paymentMethodId: order.paymentMethodId,
+              addressId: order.addressId,
+              subtotal: order.subtotal,
+              tax: order.tax,
+              deliveryFee: order.deliveryFee,
               total: order.total,
+              notes: order.notes,
+              cancellationReason: order.cancellationReason,
+              restaurantId: order.restaurantId,
+              items: order.items,
             }))
           : [],
         addresses: addresses.status === 'fulfilled' && addresses.value

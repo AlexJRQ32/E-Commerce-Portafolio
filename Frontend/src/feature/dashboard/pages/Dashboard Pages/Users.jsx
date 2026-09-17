@@ -6,8 +6,13 @@ import { Modal } from '../../../../components/Modal/Modal'
 import { useModal } from '../../../../common/hooks/useModal'
 
 export function UsersDashboard() {
-  const { users } = useMappedObjects()
+  const { users, roles } = useMappedObjects()
   const { isClose, openModal, isOpen } = useModal()
+
+  const getRoleName = (roleId) => {
+    const role = roles.find(r => r.id === roleId);
+    return role ? role.name : 'Unknown';
+  };
 
   return (
     <div className="content-section">
@@ -28,7 +33,7 @@ export function UsersDashboard() {
           <CrudCard
             key={user.id}
             img={user.img}
-            attribute={user.role}
+            attribute={getRoleName(user.roleId)}
             icon={'briefcase'}
             name={user.name}
             onclick={isOpen}

@@ -3,7 +3,7 @@ import { OrderSimpleCard } from '../../../components/Cards/Cards'
 import { ButtonRedirect } from "../../../components/Button/Button"
 
 export function OrderHistory() {
-  const { orders } = useMappedObjects()
+  const { orders, restaurants, paymentMethods } = useMappedObjects()
 
   return(
     <div className="page">
@@ -17,7 +17,7 @@ export function OrderHistory() {
         {
           orders ?
           <div className="order-body">
-            <OrderSimpleCard orders={orders} />
+            <OrderSimpleCard orders={orders} restaurants={restaurants} paymentMethods={paymentMethods} />
           </div>
           :
           <div className="order-body">

@@ -21,7 +21,7 @@ export function RestaurantsDashboard() {
       />
       <div className="content-header">
         <h1>Our Locations</h1>
-        <ButtonAction icon={'plus'} className={'add'} />
+        <ButtonAction icon={'plus'} className={'add'} onclick={isOpen} />
       </div>
       <div className="content-main">
         {restaurants.map((restaurant) => (

@@ -3,7 +3,7 @@ import { useMappedObjects } from '../../../common/hooks/useMappedObjects'
 import { OrderCard } from '../../../components/Cards/Cards'
 
 export function IncomingOrders() {
-  const { restaurants, orders } = useMappedObjects()
+  const { restaurants, orders, paymentMethods } = useMappedObjects()
   const restaurantNames = restaurants.map((restaurant) => restaurant.tradeName)
   const selectedRestaurant = restaurantNames.find(
     (name) => name === 'Taco Bell'
@@ -21,7 +21,7 @@ export function IncomingOrders() {
         </div>
         {orders ? (
           <div className="order-body">
-            <OrderCard orders={orders} />
+            <OrderCard orders={orders} restaurants={restaurants} paymentMethods={paymentMethods} />
           </div>
         ) : (
           <p className="empty">Your quaue is empty</p>

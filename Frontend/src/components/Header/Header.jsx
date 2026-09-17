@@ -9,12 +9,17 @@ import { useMappedObjects } from '../../common/hooks/useMappedObjects'
 export function Header() {
   const { isClose, openModal, isOpen } = useModal()
   const isRestaurant = true
-  const { users, loading } = useMappedObjects()
+  const { users, roles, loading } = useMappedObjects()
   
+  const getRoleName = (roleId) => {
+    const role = roles.find(r => r.id === roleId);
+    return role ? role.name : 'Invitado';
+  };
+
   // Usuario por defecto mientras carga o si no hay usuarios
   const userData = loading || !users.length
     ? { name: 'Usuario', rol: 'Invitado' }
-    : { name: users[0]?.name || 'Usuario', rol: users[0]?.role || 'Invitado' }
+    : { name: users[0]?.name || 'Usuario', rol: getRoleName(users[0]?.roleId) };
 
   return (
     <>

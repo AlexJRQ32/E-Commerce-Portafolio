@@ -1,35 +1,58 @@
 [
   {
     "id": 1,
+    "createdAt": "2026-01-10T08:00:00Z",
+    "updatedAt": null,
     "name": "Carlos Mendoza",
-    "role": "Admin",
     "email": "c.mendoza@rappidoz.com",
+    "password": "hashed_password",
+    "phone": "12345678",
     "img": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=250&auto=format&fit=crop",
-    "phone" : "12345678"
+    "roleId": 1,
+    "lastLoginAt": "2026-08-14T10:00:00Z",
+    "isActive": true,
+    "emailVerifiedAt": "2026-01-10T08:05:00Z"
   },
   {
     "id": 2,
+    "createdAt": "2026-01-12T08:00:00Z",
+    "updatedAt": null,
     "name": "Ana Rodríguez",
-    "role": "Editor",
     "email": "a.rodriguez@rappidoz.com",
+    "password": "hashed_password",
+    "phone": "12345678",
     "img": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=250&auto=format&fit=crop",
-    "phone" : "12345678"
+    "roleId": 2,
+    "lastLoginAt": "2026-08-13T15:30:00Z",
+    "isActive": true,
+    "emailVerifiedAt": "2026-01-12T08:05:00Z"
   },
   {
     "id": 3,
+    "createdAt": "2026-01-15T08:00:00Z",
+    "updatedAt": null,
     "name": "Laura Chaves",
-    "role": "Editor",
     "email": "l.chaves@rappidoz.com",
+    "password": "hashed_password",
+    "phone": "12345678",
     "img": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=250&auto=format&fit=crop",
-    "phone" : "12345678"
-
+    "roleId": 2,
+    "lastLoginAt": "2026-08-12T09:15:00Z",
+    "isActive": true,
+    "emailVerifiedAt": "2026-01-15T08:05:00Z"
   },
   {
     "id": 4,
+    "createdAt": "2026-01-20T08:00:00Z",
+    "updatedAt": null,
     "name": "Sebastian Rojas",
-    "role": "Viewer",
     "email": "s.rojas@rappidoz.com",
+    "password": "hashed_password",
+    "phone": "12345678",
     "img": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=250&auto=format&fit=crop",
-    "phone" : "12345678"
+    "roleId": 3,
+    "lastLoginAt": "2026-08-11T14:20:00Z",
+    "isActive": true,
+    "emailVerifiedAt": "2026-01-20T08:05:00Z"
   }
 ]

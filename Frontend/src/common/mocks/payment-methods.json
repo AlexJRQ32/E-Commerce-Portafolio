@@ -1,23 +1,20 @@
 [
   {
-    "id": "pay_01",
+    "id": 1,
     "name": "Efectivo",
-    "tipo": "cash",
-    "descripcion": "Paga al recibir el pedido",
-    "icono": "banknote"
+    "type": "cash",
+    "description": "Paga al recibir el pedido"
   },
   {
-    "id": "pay_02",
+    "id": 2,
     "name": "SINPE Móvil",
-    "tipo": "transfer",
-    "descripcion": "Transferencia al número de la tienda",
-    "icono": "phone"
+    "type": "transfer",
+    "description": "Transferencia al número de la tienda"
   },
   {
-    "id": "pay_03",
+    "id": 3,
     "name": "Tarjeta de Crédito / Débito",
-    "tipo": "card",
-    "descripcion": "Visa o Mastercard",
-    "icono": "credit-card"
+    "type": "card",
+    "description": "Visa o Mastercard"
   }
 ]

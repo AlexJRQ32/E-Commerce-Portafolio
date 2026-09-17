@@ -1,29 +1,42 @@
 [
   {
     "id": 116,
-    "restaurant": "Quiznos",
+    "createdAt": "2026-04-08T04:50:00Z",
+    "updatedAt": null,
     "status": "DELIVERED",
-    "date": "Wednesday, April 8, 2026",
-    "time": "04:50",
-    "customer": "User",
-    "paymentMethod": "Cash",
+    "customerId": 1,
+    "paymentMethodId": 1,
+    "addressId": 1,
+    "subtotal": 5000.00,
+    "tax": 650.00,
+    "deliveryFee": 1350.00,
+    "total": 7000.00,
+    "notes": null,
+    "cancellationReason": null,
+    "restaurantId": 1,
     "items": [
       {
         "quantity": 1,
         "name": "Large Pizza",
         "price": 5000
       }
-    ],
-    "total": 7000
+    ]
   },
   {
     "id": 117,
-    "restaurant": "Quiznos",
+    "createdAt": "2026-05-03T12:30:00Z",
+    "updatedAt": null,
     "status": "PENDING",
-    "date": "Sunday, May 3, 2026",
-    "time": "12:30",
-    "customer": "Elena Vargas",
-    "paymentMethod": "Card",
+    "customerId": 2,
+    "paymentMethodId": 3,
+    "addressId": 2,
+    "subtotal": 8200.00,
+    "tax": 1066.00,
+    "deliveryFee": 1350.00,
+    "total": 10616.00,
+    "notes": null,
+    "cancellationReason": null,
+    "restaurantId": 1,
     "items": [
       {
         "quantity": 2,
@@ -35,24 +48,29 @@
         "name": "Soft Drink",
         "price": 1200
       }
-    ],
-    "total": 8200
+    ]
   },
   {
     "id": 118,
-    "restaurant": "Quiznos",
+    "createdAt": "2026-05-03T13:15:00Z",
+    "updatedAt": null,
     "status": "CANCELLED",
-    "date": "Sunday, May 3, 2026",
-    "time": "13:15",
-    "customer": "Carlos Mendoza",
-    "paymentMethod": "Cash",
+    "customerId": 3,
+    "paymentMethodId": 1,
+    "addressId": 3,
+    "subtotal": 4200.00,
+    "tax": 546.00,
+    "deliveryFee": 1350.00,
+    "total": 6096.00,
+    "notes": null,
+    "cancellationReason": "Customer cancelled",
+    "restaurantId": 1,
     "items": [
       {
         "quantity": 1,
         "name": "Chicken Carbonara",
         "price": 4200
       }
-    ],
-    "total": 4200
+    ]
   }
 ]

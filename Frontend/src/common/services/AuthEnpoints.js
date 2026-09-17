@@ -4,6 +4,7 @@ import { setToken } from './authHelper'
 const AUTH_API = `${API_BASE_URL}/auth`
 const LOGIN_ENDPOINT = `${AUTH_API}/login`
 const REGISTER_ENDPOINT = `${AUTH_API}/register`
+const REGISTER_RESTAURANT_ENDPOINT = `${AUTH_API}/register-restaurant`
 
 export async function Login({ user }) {
   try {
@@ -23,9 +24,8 @@ export async function Login({ user }) {
 
     const data = await res.json()
 
-    // Backend returns { message, token, user } — save token
-    if (data?.token) {
-      setToken(data.token)
+    if (data?.Token) {
+      setToken(data.Token)
     }
 
     return data
@@ -53,19 +53,37 @@ export async function Register({ user }) {
 
     const data = await res.json()
 
-    // If backend returns a token on registration, save it
-    if (data?.token) {
-      setToken(data.token)
+    if (data?.Token) {
+      setToken(data.Token)
     }
-
-    // NOTE: When registering an email that already exists, the backend
-    // returns 200 with a neutral message ("Solicitud procesada") for
-    // anti-enumeration. No user is created in that case. The caller
-    // should check data.message to inform the user appropriately.
 
     return data
   } catch (error) {
     console.error('Error syncing with backend', error)
     return null
+  }
+}
+
+export async function RegisterRestaurant({ restaurant, token }) {
+  try {
+    const res = await fetch(REGISTER_RESTAURANT_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(restaurant),
+    })
+
+    if (!res.ok) {
+      const errorText = await res.text()
+      console.error('Error registering restaurant', errorText)
+      return { ok: false, message: 'Error registrando restaurante' }
+    }
+
+    return { ok: true, data: await res.json() }
+  } catch (error) {
+    console.error('Error syncing with backend', error)
+    return { ok: false, message: 'Error de conexión' }
   }
 }

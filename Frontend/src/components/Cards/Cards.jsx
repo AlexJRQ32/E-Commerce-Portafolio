@@ -105,99 +105,147 @@ export function RestaurantLargeCard({ restaurants }) {
   );
 }
 
-export function OrderCard({ orders }) {
+export function OrderCard({ orders, restaurants = [], paymentMethods = [] }) {
   const statusClass = ({ status }) => {
-    if (status === 'DELIVERED') {
-      return 'completed';
-    } else if (status === 'PENDING') {
-      return 'pending';
-    } else {
-      return 'cancelled';
-    }
+    if (status === 'DELIVERED') return 'completed';
+    if (status === 'PENDING') return 'pending';
+    return 'cancelled';
+  };
+
+  const formatDateTime = (isoString) => {
+    if (!isoString) return { date: '', time: '' };
+    const date = new Date(isoString);
+    return {
+      date: date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }),
+      time: date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    };
+  };
+
+  const getRestaurantName = (restaurantId) => {
+    const r = restaurants.find(r => r.id === restaurantId);
+    return r ? r.tradeName : 'Unknown';
+  };
+
+  const getPaymentMethodName = (paymentMethodId) => {
+    const pm = paymentMethods.find(p => p.id === paymentMethodId);
+    return pm ? pm.name : 'Unknown';
   };
 
   return (
     <ul className="orders">
-      {orders.map((order) => (
-        <li key={order.id}>
-          <div className="order-card">
-            <div className="card-header">
-              <div className="left-side">
-                <h2>Order #{order.id}</h2>
-                <p>
-                  <i className="fa-solid fa-calendar-days"></i>
-                  {order.date}
-                  <span>
-                    <i className="fa-regular fa-clock"></i>
-                    {order.time}
+      {orders.map((order) => {
+        const { date, time } = formatDateTime(order.createdAt);
+        return (
+          <li key={order.id}>
+            <div className="order-card">
+              <div className="card-header">
+                <div className="left-side">
+                  <h2>Order #{order.id}</h2>
+                  <p>
+                    <i className="fa-solid fa-calendar-days"></i>
+                    {date}
+                    <span>
+                      <i className="fa-regular fa-clock"></i>
+                      {time}
+                    </span>
+                  </p>
+                  <p>
+                    <i className="fa-solid fa-user"></i>
+                    Customer #{order.customerId}
+                  </p>
+                  <p>
+                    <i className="fa-solid fa-credit-card"></i>
+                    {getPaymentMethodName(order.paymentMethodId)}
+                  </p>
+                  <p>
+                    <i className="fa-solid fa-store"></i>
+                    {getRestaurantName(order.restaurantId)}
+                  </p>
+                </div>
+                <div className="right-side">
+                  <span className={statusClass({ status: order.status })}>
+                    {order.status}
                   </span>
-                </p>
-                <p>
-                  <i className="fa-solid fa-user"></i>
-                  {order.customer}
-                </p>
-                <p>
-                  <i className="fa-solid fa-credit-card"></i>
-                  {order.paymentMethod}
-                </p>
+                  <h3>{formatCurrency(order.total)}</h3>
+                </div>
               </div>
-              <div className="right-side">
-                <span className={statusClass({ status: order.status })}>
-                  {order.status}
-                </span>
-                <h3>{formatCurrency(order.total)}</h3>
+              <div className="card-items">
+                <i className="fa-solid fa-circle-dot"></i>
+                {order.items?.map((item) => (
+                  <span className="order-item" key={item.name}>
+                    {item.quantity}x {item.name} ({formatCurrency(item.price)})
+                  </span>
+                ))}
               </div>
+              {order.notes && <p className="order-notes"><i className="fa-solid fa-note-sticky"></i> {order.notes}</p>}
+              {order.cancellationReason && <p className="order-cancellation"><i className="fa-solid fa-ban"></i> {order.cancellationReason}</p>}
             </div>
-            <div className="card-items">
-              <i className="fa-solid fa-circle-dot"></i>
-              {order.items.map((item) => (
-                <span className="order-item" key={item.name}>
-                  {item.quantity}x {item.name} ({formatCurrency(item.price)})
-                </span>
-              ))}
-            </div>
-          </div>
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ul>
   );
 }
 
-export function OrderSimpleCard({ orders }) {
+export function OrderSimpleCard({ orders, restaurants = [], paymentMethods = [] }) {
   const statusClass = ({ status }) => {
-    if (status === 'DELIVERED') {
-      return 'completed';
-    } else if (status === 'PENDING') {
-      return 'pending';
-    } else {
-      return 'cancelled';
-    }
+    if (status === 'DELIVERED') return 'completed';
+    if (status === 'PENDING') return 'pending';
+    return 'cancelled';
+  };
+
+  const formatDateTime = (isoString) => {
+    if (!isoString) return { date: '', time: '' };
+    const date = new Date(isoString);
+    return {
+      date: date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }),
+      time: date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    };
+  };
+
+  const getRestaurantName = (restaurantId) => {
+    const r = restaurants.find(r => r.id === restaurantId);
+    return r ? r.tradeName : 'Unknown';
+  };
+
+  const getPaymentMethodName = (paymentMethodId) => {
+    const pm = paymentMethods.find(p => p.id === paymentMethodId);
+    return pm ? pm.name : 'Unknown';
   };
 
   return (
     <ul className="orders">
-      {orders.map((order) => (
-        <li key={order.id}>
-          <div className="order-card">
-            <div className="card-header">
-              <div className="left-side">
-                <h2>Order #{order.id}</h2>
-                <p>
-                  <i className="fa-solid fa-calendar-days"></i> {order.date}
-                  <i className="fa-regular fa-clock"></i> {order.time}
-                </p>
-              </div>
-              <div className="right-side">
-                <span className={statusClass({ status: order.status })}>
-                  {order.status}
-                </span>
-                <h3>{formatCurrency(order.total)}</h3>
-                <ButtonRedirect icon={'star'} title={'Rate'} />
+      {orders.map((order) => {
+        const { date, time } = formatDateTime(order.createdAt);
+        return (
+          <li key={order.id}>
+            <div className="order-card">
+              <div className="card-header">
+                <div className="left-side">
+                  <h2>Order #{order.id}</h2>
+                  <p>
+                    <i className="fa-solid fa-calendar-days"></i> {date}
+                    <i className="fa-regular fa-clock"></i> {time}
+                  </p>
+                  <p>
+                    <i className="fa-solid fa-store"></i> {getRestaurantName(order.restaurantId)}
+                  </p>
+                  <p>
+                    <i className="fa-solid fa-credit-card"></i> {getPaymentMethodName(order.paymentMethodId)}
+                  </p>
+                </div>
+                <div className="right-side">
+                  <span className={statusClass({ status: order.status })}>
+                    {order.status}
+                  </span>
+                  <h3>{formatCurrency(order.total)}</h3>
+                  <ButtonRedirect icon={'star'} title={'Rate'} />
+                </div>
               </div>
             </div>
-          </div>
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ul>
   );
 }
